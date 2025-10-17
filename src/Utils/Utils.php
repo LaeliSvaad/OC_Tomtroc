@@ -12,9 +12,9 @@ final class Utils
 
     public static function redirect(string $action, array $params = []) : void
     {
-        $url = "index.php?action=$action";
-        foreach ($params as $paramName => $paramValue) {
-            $url .= "&$paramName=$paramValue";
+        $url = "/";
+        foreach ($params as $param) {
+            $url .= "/$param";
         }
         header("Location: $url");
         exit();

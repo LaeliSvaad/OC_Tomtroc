@@ -1,9 +1,11 @@
 <?php
 
 namespace App\Controller;
-class SignInController
+
+
+class SignInController extends AbstractController
 {
-    public function connectUser() : void
+    public function logIn() : void
     {
 
         // On récupère les données du formulaire.
@@ -16,7 +18,7 @@ class SignInController
 
         // On vérifie que les données sont valides.
         if (empty($nickname) || empty($email) || empty($password)) {
-            throw new Exception("Tous les champs sont obligatoires.");
+            throw new \Exception("Tous les champs sont obligatoires.");
         }
 
         // On vérifie que l'utilisateur existe.
@@ -24,12 +26,12 @@ class SignInController
         $user = $userManager->getUserByLoginInfo($nickname, $email);
 
         if (!$user) {
-            throw new Exception("Une erreur est survenue lors de l'authentification.");
+            throw new \Exception("Une erreur est survenue lors de l'authentification.");
         }
 
         // On vérifie que le mot de passe est correct.
         if (!password_verify($password, $user->getPassword())) {
-            throw new Exception("Une erreur est survenue lors de l'authentification.");
+            throw new \Exception("Une erreur est survenue lors de l'authentification.");
         }
 
         // On connecte l'utilisateur.
@@ -39,7 +41,7 @@ class SignInController
         Utils::redirect("user-private-account", ["userId" => $user->getId()]);
     }
 
-    public function disconnectUser() : void
+    public function logOut() : void
     {
         $_SESSION = [];
 
@@ -57,9 +59,13 @@ class SignInController
         Utils::redirect("home");
     }
 
-    public function showForm() : void
+    public function showLogInForm() : void
     {
-        $view = new View('sign-in');
-        $view->render("sign-in");
+        $this->render("log-in");
+    }
+
+    public function showSignInForm() : void
+    {
+        $this->render("sign-in");
     }
 }

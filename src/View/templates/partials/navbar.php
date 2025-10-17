@@ -33,7 +33,7 @@
                 </li>
             <?php else: ?>
                 <li>
-                    <a class="nav-link <?php echo ($current_page === 'connexion' || $current_page === 'registration-form') ? 'active' : ''; ?>" href="<?= \App\Utils\Url::to('connexion') ?>">Connexion</a>
+                    <a class="nav-link <?php echo ($current_page === 'connexion' || $current_page === 'registration-form') ? 'active' : ''; ?>" href="<?= \App\Utils\Url::to('formulaire-connexion') ?>">Connexion</a>
                 </li>
             <?php endif; ?>
         </ul>

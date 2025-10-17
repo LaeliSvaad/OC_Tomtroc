@@ -3,7 +3,7 @@
         <div class="col-xs-12 col-sm-6 col-flex">
             <div class="inner-col">
                 <h2 class="playfair-display-title-font">Connexion</h2>
-                <form class="form-horizontal" method="post" action="index.php?action=sign-in" >
+                <form class="form-horizontal" method="post" action="<?= \App\Utils\Url::to('connexion') ?>" >
                     <div class='form-group'>
                         <label class='control-label' for="pseudo">Pseudo </label>
                         <input class="form-control input-lg white-input" type="text" name="nickname" id="pseudo">
@@ -20,11 +20,11 @@
                         <input class="btn green-button" type="submit" value="Se connecter">
                     </div>
                 </form>
-                <span class="link-span">Pas encore inscrit? <a href="index.php?action=registration-form" >Créer un compte</a></span>
+                <span class="link-span">Pas encore inscrit? <a href="<?= \App\Utils\Url::to('formulaire-inscription') ?>" >Créer un compte</a></span>
             </div>
         </div>
         <div class="col-xs-12 col-sm-6 background-img-col">
-            <img class="background-img" src="pictures/library.png" alt="bibliothèque" >
+            <img class="background-img" src="<?= \App\Utils\Url::to('assets/images/library.png') ?>" alt="bibliothèque" >
         </div>
     </div>
 </div>

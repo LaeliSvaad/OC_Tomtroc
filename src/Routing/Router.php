@@ -28,8 +28,26 @@ final class Router
             case '/chat':
                 $this->chatRoute();
                 break;
+            case (preg_match('#^/chat/(\d+)$#', $path, $matches) ? true : false):
+                $this->conversationRoute((int)$matches[1]);
+                break;
             case '/mon-compte':
                 $this->privateUserRoute();
+                break;
+            case '/formulaire-connexion':
+                $this->logInFormRoute();
+                break;
+            case '/formulaire-inscription':
+                $this->signUpFormRoute();
+                break;
+            case '/deconnexion':
+                $this->logOutRoute();
+                break;
+            case '/connexion':
+                $this->logInRoute();
+                break;
+            case '/inscription':
+                $this->signUpRoute();
                 break;
             case '/utilisateur':
                 $this->publicUserRoute();
@@ -58,16 +76,54 @@ final class Router
         $chatController->showChat();
     }
 
+    private function conversationRoute(int $id): void
+    {
+        $chatController = new ChatController();
+        $chatController->showConversation($id);
+    }
+
     private function bookRoute(int $id): void
     {
         $bookController = new BookController();
         $bookController->showBook($id);
     }
+
+    private function signUpFormRoute(): void
+    {
+        $userController = new UserController();
+        $userController->showSignUpForm();
+    }
+
+    private function logInFormRoute(): void
+    {
+        $userController = new UserController();
+        $userController->showLogInForm();
+    }
+
+    private function signUpRoute(): void
+    {
+        $userController = new UserController();
+        $userController->signUp();
+    }
+
+    private function logInRoute(): void
+    {
+        $userController = new UserController();
+        $userController->logIn();
+    }
+
+    private function logOutRoute(): void
+    {
+        $userController = new UserController();
+        $userController->logOut();
+    }
+
     private function publicUserRoute(): void
     {
         $userController = new UserController();
         $userController->showPublicUserPage();
     }
+
     private function privateUserRoute(): void
     {
         $userController = new UserController();
