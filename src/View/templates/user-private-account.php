@@ -66,8 +66,8 @@
                     <td><div class="italic cell-fixed"><?= $book->getDescription()?></div></td>
                     <td><div class="book-status cell-fixed"><span class="<?= $status->value ?>"></span></div></td>
                     <td><div class="book-action-links cell-fixed">
-                            <a href='index.php?action=book-form&id=<?= $book->getId() ?>' >Editer</a>
-                            <a href='index.php?action=delete-book&id=<?= $book->getId() ?>' >Supprimer</a></div></td>
+                            <a href='<?= \App\Utils\Url::to('editer-livre/' . $book->getId() ) ?>' >Editer</a>
+                            <a href='<?= \App\Utils\Url::to('supprimer-livre/' . $book->getId() ) ?>' >Supprimer</a></div></td>
                 </tr>
             <?php endforeach;  ?>
             </tbody>

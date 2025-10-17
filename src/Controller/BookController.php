@@ -4,6 +4,7 @@
 namespace App\Controller;
 
 use App\Manager\BookManager;
+use App\Utils\Utils;
 
 class BookController extends AbstractController
 {
@@ -17,19 +18,15 @@ class BookController extends AbstractController
 
     }
 
-    public function bookForm() : void
+    public function editBookForm(int $id) : void
     {
-        $id = Utils::request("id", -1);
-
         $bookManager = new BookManager();
         $book = $bookManager->getBook($id);
-
-        $view = new View('book-form');
-        $view->render("book-form", ['book' => $book]);
+        $this->render("Editer " . $book->getTitle(),"book-form", ['book' => $book] );
     }
 
     public function editBook() : void
     {
-
+        Utils::Redirect('mon-compte');
     }
 }

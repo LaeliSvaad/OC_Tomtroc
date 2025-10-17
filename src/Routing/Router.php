@@ -55,6 +55,12 @@ final class Router
             case '/editer-utilisateur':
                 $this->editUserRoute();
                 break;
+            case '/editer-livre':
+                $this->editBookRoute();
+                break;
+            case (preg_match('#^/editer-livre/(\d+)$#', $path, $matches) ? true : false):
+                $this->editBookFormRoute((int)$matches[1]);
+                break;
             default:
                 http_response_code(404);
                 echo "Page not found.";
@@ -137,5 +143,15 @@ final class Router
     {
         $userController = new UserController();
         $userController->modifyUser();
+    }
+    private function editBookFormRoute(int $id): void
+    {
+        $bookController = new BookController();
+        $bookController->editBookForm($id);
+    }
+    private function editBookRoute(): void
+    {
+        $bookController = new BookController();
+        $bookController->editBook();
     }
 }

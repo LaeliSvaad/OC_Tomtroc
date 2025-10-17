@@ -5,6 +5,7 @@ use App\Model\User;
 use App\Model\Chat;
 use App\Model\Conversation;
 use App\Model\Message;
+
 class ChatManager extends AbstractEntityManager
 {
     public function getChat(int $connectedUserId): ?Chat

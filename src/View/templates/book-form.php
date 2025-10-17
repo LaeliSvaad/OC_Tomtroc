@@ -3,11 +3,11 @@
     <h2 class="playfair-display-title-font">Modifier les informations</h2>
     <div class="row admin-row">
         <div class="col-sm-6">
-            <form action="index.php?action=edit-book" method="post" enctype="multipart/form-data" id="uploadForm">
+            <form action="<?= \App\Utils\Url::to('editer-livre') ?>" method="post" enctype="multipart/form-data" id="uploadForm">
                 <label for="imageUpload">
                     <div class="block-content">
                         <span>Photo</span>
-                        <img class='book-form-img' src='<?= $book->getBookPicture() ?>' alt='<?= $book->getTitle() ?>'>
+                        <img class='book-form-img' src='<?= \App\Utils\Url::to($book->getBookPicture()) ?>' alt='<?= $book->getTitle() ?>'>
                         <span class="input-file-span">Modifier la photo</span>
                     </div>
                 </label>
@@ -15,7 +15,7 @@
             </form>
         </div>
         <div class="col-sm-6">
-            <form class="form-horizontal admin-form" method='post' action='index.php?action=edit-book'>
+            <form class="form-horizontal admin-form" method='post' action='<?= \App\Utils\Url::to('editer-livre') ?>'>
                 <div class='form-group'>
                    <label class='control-label' for='input-title' >Titre </label>
                     <input class='form-control input-lg blue-input' type='text' id='input-title' name='title' value='<?= $book->getTitle() ?>'/>
@@ -37,7 +37,7 @@
                 <div class='form-group'>
                     <label class='control-label' for='input-disponibilite' >Disponibilité </label>
                     <select class='form-control input-lg blue-input' name='disponibilite' id='input-disponibilite'>
-                        <?php foreach (BookStatus::cases() as $status) : ?>
+                        <?php foreach (App\enum\BookStatus::cases() as $status) : ?>
                         <option value="<?= $status->value ?>"><?= $status->getLabel() ?></option>
                         <?php endforeach; ?>
                     </select>
