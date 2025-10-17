@@ -7,14 +7,15 @@ use App\Manager\LibraryManager;
 
 final class HomeController extends AbstractController
 {
+    private readonly LibraryManager $libraryManager;
+
     public function __construct()
     {
-
+        $this->libraryManager = new LibraryManager();
     }
     public function showHomepage(): void
     {
-        $libraryManager = new LibraryManager();
-        $library = $libraryManager->getHomepageBooks();
+        $library = $this->libraryManager->getHomepageBooks();
         $this->render('Accueil', 'home', ['library' => $library->getLibrary()]);
     }
 }

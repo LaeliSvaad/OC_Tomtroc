@@ -3,155 +3,150 @@ declare(strict_types=1);
 
 namespace App\Routing;
 
-use App\Controller\HomeController;
-use App\Controller\LibraryController;
-use App\Controller\BookController;
-use App\Controller\ChatController;
-use App\Controller\UserController;
+use App\Config\Config;
+use App\Controller\NotFoundController;
+use ReflectionMethod;
 
 final class Router
 {
     public function handleRequest(string $uri): void
     {
-        $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $path = parse_url($uri, PHP_URL_PATH);
 
-        switch ($path) {
-            case '/':
-                $this->homeRoute();
-                break;
-            case '/nos-livres':
-                $this->libraryRoute();
-                break;
-            case (preg_match('#^/nos-livres/(\d+)$#', $path, $matches) ? true : false):
-                $this->bookRoute((int)$matches[1]);
-                break;
-            case '/chat':
-                $this->chatRoute();
-                break;
-            case (preg_match('#^/chat/(\d+)$#', $path, $matches) ? true : false):
-                $this->conversationRoute((int)$matches[1]);
-                break;
-            case '/formulaire-connexion':
-                $this->logInFormRoute();
-                break;
-            case '/formulaire-inscription':
-                $this->signUpFormRoute();
-                break;
-            case '/deconnexion':
-                $this->logOutRoute();
-                break;
-            case '/connexion':
-                $this->logInRoute();
-                break;
-            case '/inscription':
-                $this->signUpRoute();
-                break;
-            case '/mon-compte':
-                $this->privateUserRoute();
-                break;
-            case (preg_match('#^/utilisateur/(\d+)$#', $path, $matches) ? true : false):
-                $this->publicUserRoute((int)$matches[1]);
-                break;
-            case '/editer-utilisateur':
-                $this->editUserRoute();
-                break;
-            case '/editer-livre':
-                $this->editBookRoute();
-                break;
-            case (preg_match('#^/editer-livre/(\d+)$#', $path, $matches) ? true : false):
-                $this->editBookFormRoute((int)$matches[1]);
-                break;
-            default:
-                http_response_code(404);
-                echo "Page not found.";
+        foreach (Config::get('routes') as [$routePath, $controllerClass, $methodName]) {
+            //Route statique exacte
+            if ($routePath === $path) {
+                $controller = new $controllerClass();
+                $controller->$methodName();
+                return;
+            }
+
+            //Route dynamique : {param} ou {param:regex}
+            [$regex, $paramNames] = $this->convertToNamedRegex($routePath);
+
+            if (preg_match($regex, $path, $matches)) {
+                $params = [];
+                foreach ($paramNames as $name) {
+                    $params[$name] = $matches[$name] ?? null;
+                }
+
+                $controller = new $controllerClass();
+                $convertedParams = $this->convertParamsForMethod($controllerClass, $methodName, $params);
+
+                if ($convertedParams === false) {
+                    (new NotFoundController())->show404();
+                    return;
+                }
+
+                $controller->$methodName(...$convertedParams);
+                return;
+            }
         }
+
+        //Aucune route ne correspond
+        (new NotFoundController())->show404();
     }
 
-    private function homeRoute(): void
+    /**
+     * Transforme une route du type :
+     *   /livre/{id:\d+}
+     *   /auteur/{slug:[a-z-]+}
+     *   /produit/{cat}/{ref:\d+}
+     *
+     * En regex utilisable :
+     *   #^/livre/(?P<id>\d+)$#
+     *   #^/auteur/(?P<slug>[a-z-]+)$#
+     *
+     * @return array [string $regex, string[] $paramNames]
+     */
+    private function convertToNamedRegex(string $routePath): array
     {
-        $homeController = new HomeController();
-        $homeController->showHomepage();
+        $paramNames = [];
+
+        $regex = preg_replace_callback(
+            '#\{([a-zA-Z_][a-zA-Z0-9_]*)(?::([^}]+))?\}#',
+            function ($matches) use (&$paramNames) {
+                $name = $matches[1];
+                $constraint = $matches[2] ?? '[^/]+';
+                $paramNames[] = $name;
+                return '(?P<' . $name . '>' . $constraint . ')';
+            },
+            $routePath
+        );
+
+        $regex = "#^" . $regex . "$#";
+        return [$regex, $paramNames];
     }
 
-    private function libraryRoute(): void
+    /**
+     * Convertit les paramètres nommés en valeurs typées selon la signature du contrôleur.
+     *
+     * @param class-string $controllerClass
+     * @param string $methodName
+     * @param array<string,string|null> $rawParams
+     * @return array|false
+     */
+    private function convertParamsForMethod(string $controllerClass, string $methodName, array $rawParams)
     {
-        $libraryController = new LibraryController();
-        $libraryController->showLibrary();
-    }
+        try {
+            $ref = new ReflectionMethod($controllerClass, $methodName);
+        } catch (\ReflectionException $e) {
+            return false;
+        }
 
-    private function chatRoute(): void
-    {
-        $chatController = new ChatController();
-        $chatController->showChat();
-    }
+        $converted = [];
 
-    private function conversationRoute(int $id): void
-    {
-        $chatController = new ChatController();
-        $chatController->showConversation($id);
-    }
+        foreach ($ref->getParameters() as $refParam) {
+            $name = $refParam->getName();
 
-    private function bookRoute(int $id): void
-    {
-        $bookController = new BookController();
-        $bookController->showBook($id);
-    }
+            if (!array_key_exists($name, $rawParams)) {
+                if ($refParam->isDefaultValueAvailable()) {
+                    $converted[] = $refParam->getDefaultValue();
+                    continue;
+                }
+                if ($refParam->allowsNull()) {
+                    $converted[] = null;
+                    continue;
+                }
+                return false;
+            }
 
-    private function signUpFormRoute(): void
-    {
-        $userController = new UserController();
-        $userController->showSignUpForm();
-    }
+            $raw = $rawParams[$name];
+            $type = $refParam->getType();
 
-    private function logInFormRoute(): void
-    {
-        $userController = new UserController();
-        $userController->showLogInForm();
-    }
+            if ($type === null) {
+                $converted[] = $raw;
+                continue;
+            }
 
-    private function signUpRoute(): void
-    {
-        $userController = new UserController();
-        $userController->signUp();
-    }
+            $typeName = $type->getName();
+            $allowsNull = $type->allowsNull();
 
-    private function logInRoute(): void
-    {
-        $userController = new UserController();
-        $userController->logIn();
-    }
+            if ($raw === null && $allowsNull) {
+                $converted[] = null;
+                continue;
+            }
 
-    private function logOutRoute(): void
-    {
-        $userController = new UserController();
-        $userController->logOut();
-    }
+            switch ($typeName) {
+                case 'int':
+                    if (!is_numeric($raw)) return false;
+                    $converted[] = (int)$raw;
+                    break;
+                case 'float':
+                    if (!is_numeric($raw)) return false;
+                    $converted[] = (float)$raw;
+                    break;
+                case 'bool':
+                    $converted[] = in_array(strtolower((string)$raw), ['1', 'true', 'on', 'yes'], true);
+                    break;
+                case 'string':
+                    $converted[] = (string)$raw;
+                    break;
+                default:
+                    return false; // type non géré
+            }
+        }
 
-    private function publicUserRoute(int $id): void
-    {
-        $userController = new UserController();
-        $userController->showPublicUserPage($id);
-    }
-
-    private function privateUserRoute(): void
-    {
-        $userController = new UserController();
-        $userController->showPrivateUserPage();
-    }
-
-    private function editUserRoute(): void
-    {
-        $userController = new UserController();
-        $userController->modifyUser();
-    }
-    private function editBookFormRoute(int $id): void
-    {
-        $bookController = new BookController();
-        $bookController->editBookForm($id);
-    }
-    private function editBookRoute(): void
-    {
-        $bookController = new BookController();
-        $bookController->editBook();
+        return $converted;
     }
 }

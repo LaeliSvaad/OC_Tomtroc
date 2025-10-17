@@ -10,6 +10,11 @@ use App\Utils\Utils;
 
 class UserController extends AbstractController
 {
+    private readonly UserManager $userManager;
+    public function __construct()
+    {
+        $this->userManager= new UserManager();
+    }
     public function showLogInForm() : void
     {
         $this->render("Connexion", "log-in");
