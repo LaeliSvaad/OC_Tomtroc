@@ -5,7 +5,7 @@
                 <div class="inner-col">
                     <strong class="span-title playfair-display-title-font">Rejoignez nos lecteurs passionnés</strong>
                     <p class="intro-content">Donnez une nouvelle vie à vos livres en les échangeant avec d'autres amoureux de la lecture. Nous croyons en la magie du partage de connaissances et d'histoires à travers les livres.</p>
-                    <a class="button-link" href="index.php?action=our-books" ><button class="btn green-button">Découvrir</button></a>
+                    <a class="button-link" href="<?= \App\Utils\Url::to('/nos-livres') ?>" ><button class="btn green-button">Découvrir</button></a>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6">
@@ -28,7 +28,7 @@
             <?php foreach ($library as $book): ?>
                 <div class='col-xs-6 col-sm-3'>
                     <div class='inner-col book-card'>
-                        <a href='?action=book-details&id=<?= $book->getId() . '&userId=' .$book->getUser()->getUserId() ?>'>
+                        <a href='<?= \App\Utils\Url::to('/nos-livres/' . $book->getId()) ?>'>
                             <div class='book-img'>
                                 <img src='<?= $book->getBookPicture() ?>' alt='<?= $book->getTitle() ?>'>
                             </div>
@@ -44,7 +44,7 @@
         </div>
         <div class="row">
             <div class="col-xs-12">
-                <a class="button-link" href="index.php?action=our-books" >
+                <a class="button-link" href="<?= \App\Utils\Url::to('/nos-livres') ?>" >
                     <button class="btn green-button">Voir tous les livres</button>
                 </a>
             </div>
@@ -68,7 +68,7 @@
                         <div>Parcourez les livres disponibles chez d'autres membres.</div>
                         <div>Proposez un échange et discutez avec d'autres passionnés de lecture.</div>
                     </div>
-                    <a class="button-link" href="index.php?action=our-books" ><button class="btn transparent-button">Voir tous les livres</button></a>
+                    <a class="button-link" href="<?= \App\Utils\Url::to('/nos-livres') ?>" ><button class="btn transparent-button">Voir tous les livres</button></a>
                 </div>
             </div>
         </div>

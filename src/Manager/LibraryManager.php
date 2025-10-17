@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Manager;
-use App\Manager\AbstractEntityManager;
 use App\Enum\BookStatus;
 use App\Model\Author;
 use App\Model\Book;

@@ -1,8 +1,15 @@
 <?php
+namespace App\Controller;
 
-class MessagingController
+use App\Manager\UserManager;
+use App\Manager\MessageManager;
+use App\Manager\ConversationManager;
+use App\Manager\ChatManager;
+use App\Utils\Utils;
+
+class ChatController extends AbstractController
 {
-    public function showConversation() : void
+    public function showChat() : void
     {
         $connectedUserId = $_SESSION["user"];
         $interlocutorId = Utils::request("interlocutorId", -1);
@@ -24,8 +31,7 @@ class MessagingController
 
         if(empty($chat->getChat()) && $interlocutorId === -1){
             /* Si la liste de conversations est vide et qu'il n'y a pas d'interlocuteur potentiel, on ne va pas plus loin et on envoie la vue */
-            $view = new View('chat');
-            $view->render("chat", ['chat' => $chat, 'conversation' => NULL]);
+            $this->render("chat", 'chat', ['chat' => $chat, 'conversation' => NULL]);
         }
         else if(empty($chat->getChat()) && $interlocutorId != -1){
             /* Liste de conversations vide, mais interlocuteur demandé:
@@ -37,8 +43,7 @@ class MessagingController
                 $conversation->setConversationId($conversationManager->getLastConversationId());
             else
                 throw new Exception("Une erreur est survenue lors de l'initialisation de la conversation.");
-            $view = new View('chat');
-            $view->render("chat", ['chat' => $chat, 'conversation' => $conversation]);
+            $this->render("chat", 'chat', ['chat' => $chat, 'conversation' => $conversation]);
         }
         else{
             /* On récupère une conversation à afficher entièrement */
@@ -72,8 +77,7 @@ class MessagingController
                 $interlocutor = $conversationManager->getInterlocutor($connectedUserId, $conversationId);
                 $conversation->setInterlocutor($interlocutor);
             }
-            $view = new View('chat');
-            $view->render("chat", ['chat' => $chat, 'conversation' => $conversation]);
+            $this->render("chat", 'chat', ['chat' => $chat, 'conversation' => $conversation]);
         }
 
     }
@@ -106,7 +110,7 @@ class MessagingController
             "conversationId" => $conversationId]);
         if($messageManager->sendMessage($message))
         {
-            Utils::redirect("conversation", ["conversationId" => $conversationId]);
+            Utils::redirect("chat", ["conversationId" => $conversationId]);
         }
         else
         {

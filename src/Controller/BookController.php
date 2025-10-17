@@ -1,17 +1,20 @@
 <?php
 
 
-class BookController
+namespace App\Controller;
+
+use App\Manager\BookManager;
+
+class BookController extends AbstractController
 {
-    public function showBook() : void
+    public function showBook(int $id) : void
     {
-        $id = Utils::request("id", -1);
 
         $bookManager = new BookManager();
         $book = $bookManager->getBook($id);
 
-        $view = new View('book-details');
-        $view->render("book-details", ['book' => $book]);
+        $this->render($book->getTitle(), "book-details", ['book' => $book]);
+
     }
 
     public function bookForm() : void

@@ -27,7 +27,7 @@
                 $author   = $book->getAuthor();
                 $isOwner  = isset($_SESSION['user']) && $_SESSION['user'] == $userId; ?>
             <div class="col-xs-6 col-sm-3 book-card">
-                <a href="?action=book-details&id=<?= $bookId ?>&userId=<?= $userId ?>">
+                <a href="<?= \App\Utils\Url::to('/nos-livres/' . $book->getId()) ?>">
                     <div class="book-img">
                         <img src="<?=$book->getBookPicture() ?>" alt="<?= $book->getTitle() ?>">
                     </div>

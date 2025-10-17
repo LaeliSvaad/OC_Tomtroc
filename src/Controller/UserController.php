@@ -1,13 +1,17 @@
 <?php
+namespace App\Controller;
 
-class UserPageController
+use App\Manager\UserManager;
+use App\Manager\ChatManager;
+use App\Manager\LibraryManager;
+use App\Utils\Utils;
+class UserController extends AbstractController
 {
     public function showPublicUserPage(): void
     {
         if(is_null(Utils::request("id")))
         {
-            $view = new View('Erreur');
-            $view->render("error-page");
+            $this->render("error-page", "Erreur");
         }
         else
         {
@@ -28,8 +32,8 @@ class UserPageController
                 }
                 $user->setChat($chat);
             }
-            $view = new View('user-public-account');
-            $view->render("user-public-account", ['user' => $user]);
+
+            $this->render("utilisateur", "user-public-account", ['user' => $user]);
         }
     }
 
@@ -37,8 +41,7 @@ class UserPageController
     {
         if(!isset($_SESSION['user']))
         {
-            $view = new View('sign-in');
-            $view->render("sign-in");
+            $this->render("error-page", "Erreur");
         }
         else
         {
@@ -56,8 +59,8 @@ class UserPageController
                 $user->setChat($userChat);
             }
 
-            $view = new View('user-private-account');
-            $view->render("user-private-account", ['user' => $user]);
+            $this->render("utilisateur", "user-private-account", ['user' => $user]);
+
         }
     }
 

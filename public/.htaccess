@@ -2,6 +2,9 @@
     RewriteEngine On
     RewriteBase /
 
+    # Ne pas rediriger les requêtes vers les fichiers d'assets
+    RewriteCond %{REQUEST_URI} !^/assets/
+
     # Redirige tout vers index.php sauf si fichier/dossier existe
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d

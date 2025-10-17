@@ -17,7 +17,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="<?= \App\Utils\Url::to('assets/css/style.css') ?>" />
 </head>
 <body>
 <?php include __DIR__ . '/partials/header.php'; ?>
@@ -29,5 +29,5 @@
 
 <?php include __DIR__ . '/partials/footer.php'; ?>
 </body>
-<script src="assets/js/script.js"></script>
+<script src="<?= \App\Utils\Url::to('assets/js/script.js') ?>"></script>
 </html>

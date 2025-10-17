@@ -22,8 +22,8 @@ final class Router
             case '/nos-livres':
                 $this->libraryRoute();
                 break;
-            case '/book':
-                $this->bookRoute();
+            case (preg_match('#^/nos-livres/(\d+)$#', $path, $matches) ? true : false):
+                $this->bookRoute((int)$matches[1]);
                 break;
             case '/chat':
                 $this->chatRoute();
@@ -58,19 +58,19 @@ final class Router
         $chatController->showChat();
     }
 
-    private function bookRoute(): void
+    private function bookRoute(int $id): void
     {
         $bookController = new BookController();
-        $bookController->showBook();
+        $bookController->showBook($id);
     }
     private function publicUserRoute(): void
     {
         $userController = new UserController();
-        $userController->showPublicUser();
+        $userController->showPublicUserPage();
     }
     private function privateUserRoute(): void
     {
         $userController = new UserController();
-        $userController->showPublicUser();
+        $userController->showPrivateUserPage();
     }
 }
