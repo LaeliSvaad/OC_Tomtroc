@@ -129,7 +129,7 @@ class UserManager extends AbstractEntityManager
         $result = $this->db->query($sql, ['userId' => $userId]);
         $user = $result->fetch();
         if ($user) {
-            $user["registration_date"] = new DateTime($user["registration_date"]);
+            $user["registration_date"] = new \DateTime($user["registration_date"]);
             return new User($user);
         }
         return null;
@@ -146,7 +146,7 @@ class UserManager extends AbstractEntityManager
         $result = $this->db->query($sql, ['userId' => $userId]);
         $user = $result->fetch();
         if ($user) {
-            $user["registration_date"] = new DateTime($user["registration_date"]);
+            $user["registration_date"] = new \DateTime($user["registration_date"]);
             return new User($user);
         }
         return null;

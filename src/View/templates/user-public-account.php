@@ -6,18 +6,18 @@
         <div class="row">
             <div class="col-xs-12 col-sm-3">
                 <div class="profile-picture">
-                    <img class="profile-picture large-profile-picture" src="<?= $user->getPicture() ?>" alt="<?= $user->getNickname() ?> profile picture" />
+                    <img class="profile-picture large-profile-picture" src="<?= \App\Utils\Url::to($user->getPicture()) ?>" alt="<?= $user->getNickname() ?> profile picture" />
                 </div>
                 <div>
-                    <img src="pictures/separator.png" alt="separator">
+                    <img src="<?= \App\Utils\Url::to('assets/images/separator.png') ?>" alt="separator">
                 </div>
                 <div class="content-block">
                     <h3 class="playfair-display-title-font"><?= $user->getNickname() ?></h3>
-                    <div><span class="grey-text">Membre depuis <?= Utils::dateInterval($user->getRegistrationDate()) ?></span></div>
+                    <div><span class="grey-text">Membre depuis <?= \App\Utils\Utils::dateInterval($user->getRegistrationDate()) ?></span></div>
                     <div><span class="uppercase-text">Bibliothèque</span></div>
-                    <div><img src="pictures/library-icon.png" alt="library icon">&nbsp;<span><?= $user->getLibrary()->countBooks() ?> livres</span></div>
+                    <div><img src="<?= \App\Utils\Url::to('assets/images/library-icon.png') ?>" alt="library icon">&nbsp;<span><?= $user->getLibrary()->countBooks() ?> livres</span></div>
                     <?php if (isset($_SESSION["user"])): ?>
-                        <a href="index.php?action=conversation&user1Id<?= $_SESSION['user'] ?>=&user2Id=<?= $user->getUserId() ?>" class="button-link">
+                        <a href="<?= \App\Utils\Url::to('conversation/' . $user->getUserId()) ?>" class="button-link">
                             <button class="btn transparent-button">Écrire un message</button>
                         </a>
                     <?php else: ?>
@@ -34,7 +34,7 @@
                         <?php foreach ($library as $book):
                             $author = $book->getAuthor(); ?>
                             <tr>
-                                <td><div class="cell-fixed"><img class='table-book-img' src='<?= $book->getBookPicture() ?>' alt='<?= $book->getTitle()?>'></div></td>
+                                <td><div class="cell-fixed"><img class='table-book-img' src='<?= \App\Utils\Url::to($book->getBookPicture()) ?>' alt='<?= $book->getTitle()?>'></div></td>
                                 <td><div class="cell-fixed"><?= $book->getTitle() ?></div></td>
                                 <td><div class="cell-fixed"><?= $author->getFirstname() . " " . $author->getLastname() ?></div></td>
                                 <td><div class="italic cell-fixed"><?= $book->getDescription()?></div></td>

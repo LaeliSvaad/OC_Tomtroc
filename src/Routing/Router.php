@@ -31,9 +31,6 @@ final class Router
             case (preg_match('#^/chat/(\d+)$#', $path, $matches) ? true : false):
                 $this->conversationRoute((int)$matches[1]);
                 break;
-            case '/mon-compte':
-                $this->privateUserRoute();
-                break;
             case '/formulaire-connexion':
                 $this->logInFormRoute();
                 break;
@@ -49,8 +46,14 @@ final class Router
             case '/inscription':
                 $this->signUpRoute();
                 break;
-            case '/utilisateur':
-                $this->publicUserRoute();
+            case '/mon-compte':
+                $this->privateUserRoute();
+                break;
+            case (preg_match('#^/utilisateur/(\d+)$#', $path, $matches) ? true : false):
+                $this->publicUserRoute((int)$matches[1]);
+                break;
+            case '/editer-utilisateur':
+                $this->editUserRoute();
                 break;
             default:
                 http_response_code(404);
@@ -118,15 +121,21 @@ final class Router
         $userController->logOut();
     }
 
-    private function publicUserRoute(): void
+    private function publicUserRoute(int $id): void
     {
         $userController = new UserController();
-        $userController->showPublicUserPage();
+        $userController->showPublicUserPage($id);
     }
 
     private function privateUserRoute(): void
     {
         $userController = new UserController();
         $userController->showPrivateUserPage();
+    }
+
+    private function editUserRoute(): void
+    {
+        $userController = new UserController();
+        $userController->modifyUser();
     }
 }

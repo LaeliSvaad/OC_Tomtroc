@@ -3,7 +3,9 @@ namespace App\Controller;
 
 use App\Manager\UserManager;
 use App\Manager\ChatManager;
+use App\Manager\ConversationManager;
 use App\Manager\LibraryManager;
+use App\Model\Chat;
 use App\Utils\Utils;
 
 class UserController extends AbstractController
@@ -48,7 +50,7 @@ class UserController extends AbstractController
         $_SESSION['user'] = $user->getId();
 
         //On redirige vers la page utilisateur
-        Utils::redirect("user-private-account", ["userId" => $user->getId()]);
+        Utils::redirect("mon-compte");
     }
 
     public function signUp(){
@@ -88,44 +90,41 @@ class UserController extends AbstractController
 
         session_destroy();
 
-        Utils::redirect("home");
+        Utils::redirect("");
     }
 
-    public function showPublicUserPage(): void
+    public function showPublicUserPage($userId): void
     {
-        if(is_null(Utils::request("id")))
-        {
-            $this->render("error-page", "Erreur");
-        }
-        else
-        {
-            $userId= Utils::request("id");
-            $userManager = new UserManager();
-            $user = $userManager->getPublicUserById($userId);
-            if(!is_null($user))
-            {
-                $libraryManager = new LibraryManager();
-                $userLibrary = $libraryManager->getLibraryByUserId($userId);
-                $user->setLibrary($userLibrary);
-                $chat = new Chat();
-                if(isset($_SESSION["user"]))
-                {
-                    $conversationManager = new ConversationManager();
-                    $conversation =  $conversationManager->getConversationByUsersId($_SESSION["user"], $user->getUserId());
-                    $chat->addConversation($conversation);
-                }
-                $user->setChat($chat);
-            }
+       if(is_null($userId)){
+           $this->render("Erreur","error-page");
+       }
+       else
+       {
+           $userId = (int)$userId;
+           $userManager = new UserManager();
+           $user = $userManager->getPublicUserById($userId);
+           if (!is_null($user)) {
+               $libraryManager = new LibraryManager();
+               $userLibrary = $libraryManager->getLibraryByUserId($userId);
+               $user->setLibrary($userLibrary);
+               $chat = new Chat();
+               if (isset($_SESSION["user"])) {
+                   $conversationManager = new ConversationManager();
+                   $conversation = $conversationManager->getConversationByUsersId($_SESSION["user"], $user->getUserId());
+                   $chat->addConversation($conversation);
+               }
+               $user->setChat($chat);
+           }
 
-            $this->render("utilisateur", "user-public-account", ['user' => $user]);
-        }
+           $this->render("utilisateur", "user-public-account", ['user' => $user]);
+       }
     }
 
     public function showPrivateUserPage(): void
     {
         if(!isset($_SESSION['user']))
         {
-            $this->render("error-page", "Erreur");
+            $this->render("Erreur", "error-page");
         }
         else
         {

@@ -6,7 +6,7 @@ namespace App\Model;
 class Message extends AbstractEntity
 {
 
-    private ?Datetime $datetime;
+    private ?\Datetime $datetime;
     private string $text;
     private bool $seenByRecipient;
     private bool $connectedUserMessage = false;
@@ -55,12 +55,12 @@ class Message extends AbstractEntity
         return $this->conversationId;
     }
 
-    public function setDatetime(?Datetime $datetime) : void
+    public function setDatetime(?\Datetime $datetime) : void
     {
         $this->datetime = $datetime;
     }
 
-    public function getDatetime() : ?Datetime
+    public function getDatetime() : ?\Datetime
     {
         return $this->datetime;
     }

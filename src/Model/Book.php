@@ -4,6 +4,9 @@
  * Entité Book
  */
 namespace App\Model;
+
+use App\Enum\BookStatus;
+
 class Book extends AbstractEntity
 {
     private string $title;

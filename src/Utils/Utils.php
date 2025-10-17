@@ -12,7 +12,7 @@ final class Utils
 
     public static function redirect(string $action, array $params = []) : void
     {
-        $url = "/";
+        $url = "/" . $action;
         foreach ($params as $param) {
             $url .= "/$param";
         }
@@ -20,9 +20,9 @@ final class Utils
         exit();
     }
 
-    public static function dateInterval(DateTime $registrationDate) :string
+    public static function dateInterval(\DateTime $registrationDate) :string
     {
-        $now = new DateTime();
+        $now = new \DateTime();
         $interval = $now->diff($registrationDate);
         if($interval->y != 0)
             return $interval->format("%y ans");
@@ -33,10 +33,10 @@ final class Utils
         else
             return $interval->format("%H heures");
     }
-    public static function convertDateToMediumFormat(DateTime $date) : string
+    public static function convertDateToMediumFormat(\DateTime $date) : string
     {
-        $dateFormatter = new IntlDateFormatter('fr_FR', IntlDateFormatter::FULL, IntlDateFormatter::FULL);
-        $today = new DateTime('today');
+        $dateFormatter = new \IntlDateFormatter('fr_FR', \IntlDateFormatter::FULL, \IntlDateFormatter::FULL);
+        $today = new \DateTime('today');
         if ($date->format('Y-m-d') !== $today->format('Y-m-d')) {
             $dateFormatter->setPattern('dd.MM HH:mm');
         } else {
@@ -45,10 +45,10 @@ final class Utils
         return $dateFormatter->format($date);
     }
 
-    public static function convertDateToSmallFormat(DateTime $date) : string
+    public static function convertDateToSmallFormat(\DateTime $date) : string
     {
-        $dateFormatter = new IntlDateFormatter('fr_FR', IntlDateFormatter::FULL, IntlDateFormatter::FULL);
-        $today = new DateTime('today');
+        $dateFormatter = new \IntlDateFormatter('fr_FR', \IntlDateFormatter::FULL, \IntlDateFormatter::FULL);
+        $today = new \DateTime('today');
         if ($date->format('Y-m-d') !== $today->format('Y-m-d')) {
             $dateFormatter->setPattern('dd.MM');
         } else {

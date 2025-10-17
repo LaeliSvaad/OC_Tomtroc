@@ -1,11 +1,11 @@
-<?php var_dump($user); $library = $user->getLibrary()->getLibrary(); ?>
+<?php $library = $user->getLibrary()->getLibrary(); ?>
 <div class="main-content container-fluid">
     <h2 class="playfair-display-title-font">Mon compte</h2>
     <div class="row">
         <div class="col-xs-12 col-sm-6">
             <div class="inner-col white-block">
                 <div>
-                    <form action="index.php?action=modify-user" method="post" enctype="multipart/form-data" id="uploadForm">
+                    <form action="<?= \App\Utils\Url::to('editer-utilisateur') ?>" method="post" enctype="multipart/form-data" id="uploadForm">
                         <label for="imageUpload">
                             <div class="block-content user-picture-input-div">
                                 <img class="profile-picture large-profile-picture" src="<?= $user->getPicture() ?>" alt="<?= $user->getNickname() ?> profile picture" />
@@ -17,20 +17,20 @@
                     </form>
                 </div>
                 <div>
-                    <img src="pictures/separator.png" alt="separator">
+                    <img src="<?= \App\Utils\Url::to('assets/images/separator.png') ?>" alt="separator">
                 </div>
                 <div>
                     <h3 class="playfair-display-title-font"><?= $user->getNickname() ?></h3>
-                    <div><span class="grey-text">Membre depuis <?= Utils::dateInterval($user->getRegistrationDate()) ?></span></div>
+                    <div><span class="grey-text">Membre depuis <?= \App\Utils\Utils::dateInterval($user->getRegistrationDate()) ?></span></div>
                     <div><span class="uppercase-text">Bibliothèque</span></div>
-                    <div><img src="pictures/library-icon.png" alt="library icon">&nbsp;<span><?= $user->getLibrary()->countBooks() ?> livres</span></div>
+                    <div><img src="<?= \App\Utils\Url::to('assets/images/library-icon.png') ?>" alt="library icon">&nbsp;<span><?= $user->getLibrary()->countBooks() ?> livres</span></div>
                 </div>
             </div>
         </div>
         <div class="col-xs-12 col-sm-6">
             <div class="inner-col white-block">
                 <span class="span-small-title">Vos informations personnelles</span>
-                <form class="form-horizontal" method='post' action='index.php?action=modify-user'>
+                <form class="form-horizontal" method='post' action='<?= \App\Utils\Url::to('editer-utilisateur') ?>'>
                     <input type="hidden" name="userId" value="<?= $user->getUserId() ?>"/>
                     <div class='form-group'>
                         <label class='control-label' for="input-email" >Adresse email</label>
@@ -51,7 +51,7 @@
             </div>
         </div>
     </div>
-    <?php if($user->getLibrary()  ->countBooks() != 0){ ?>
+    <?php if($user->getLibrary()->countBooks() != 0){ ?>
     <div class="row">
         <table class="books-table">
             <tbody>
@@ -65,7 +65,9 @@
                     <td><div class="cell-fixed"><?= $author->getFirstname() . " " . $author->getLastname() ?></div></td>
                     <td><div class="italic cell-fixed"><?= $book->getDescription()?></div></td>
                     <td><div class="book-status cell-fixed"><span class="<?= $status->value ?>"></span></div></td>
-                    <td><div class="book-action-links cell-fixed"><a href='index.php?action=book-form&id=<?= $book->getId() ?>' >Editer</a><a href='index.php?action=delete-book&id=<?= $book->getId() ?>' >Supprimer</a></div></td>
+                    <td><div class="book-action-links cell-fixed">
+                            <a href='index.php?action=book-form&id=<?= $book->getId() ?>' >Editer</a>
+                            <a href='index.php?action=delete-book&id=<?= $book->getId() ?>' >Supprimer</a></div></td>
                 </tr>
             <?php endforeach;  ?>
             </tbody>
