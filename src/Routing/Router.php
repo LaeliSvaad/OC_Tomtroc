@@ -5,7 +5,6 @@ namespace App\Routing;
 
 use App\Config\Config;
 use App\Controller\NotFoundController;
-use ReflectionMethod;
 
 final class Router
 {
@@ -25,6 +24,7 @@ final class Router
             [$regex, $paramNames] = $this->convertToNamedRegex($routePath);
 
             if (preg_match($regex, $path, $matches)) {
+
                 $params = [];
                 foreach ($paramNames as $name) {
                     $params[$name] = $matches[$name] ?? null;
@@ -32,7 +32,6 @@ final class Router
 
                 $controller = new $controllerClass();
                 $convertedParams = $this->convertParamsForMethod($controllerClass, $methodName, $params);
-
                 if ($convertedParams === false) {
                     (new NotFoundController())->show404();
                     return;
@@ -62,7 +61,6 @@ final class Router
     private function convertToNamedRegex(string $routePath): array
     {
         $paramNames = [];
-
         $regex = preg_replace_callback(
             '#\{([a-zA-Z_][a-zA-Z0-9_]*)(?::([^}]+))?\}#',
             function ($matches) use (&$paramNames) {
@@ -73,7 +71,6 @@ final class Router
             },
             $routePath
         );
-
         $regex = "#^" . $regex . "$#";
         return [$regex, $paramNames];
     }
@@ -89,7 +86,7 @@ final class Router
     private function convertParamsForMethod(string $controllerClass, string $methodName, array $rawParams)
     {
         try {
-            $ref = new ReflectionMethod($controllerClass, $methodName);
+            $ref = new \ReflectionMethod($controllerClass, $methodName);
         } catch (\ReflectionException $e) {
             return false;
         }
@@ -98,7 +95,6 @@ final class Router
 
         foreach ($ref->getParameters() as $refParam) {
             $name = $refParam->getName();
-
             if (!array_key_exists($name, $rawParams)) {
                 if ($refParam->isDefaultValueAvailable()) {
                     $converted[] = $refParam->getDefaultValue();

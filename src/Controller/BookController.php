@@ -12,20 +12,21 @@ class BookController extends AbstractController
     {
         $this->bookManager = new BookManager();
     }
-    public function showBook(int $id) : void
+    public function showBook(int $bookId) : void
     {
-        $book = $this->bookManager->getBook($id);
+        $book = $this->bookManager->getBook($bookId);
         $this->render($book->getTitle(), "book-details", ['book' => $book]);
     }
 
-    public function editBookForm(int $id) : void
+    public function editBookForm(int $bookId) : void
     {
-        $book = $this->bookManager->getBook($id);
+        $book = $this->bookManager->getBook($bookId);
         $this->render("Editer " . $book->getTitle(),"book-form", ['book' => $book] );
     }
 
-    public function editBook() : void
+    public function editBook(int $bookId) : void
     {
+        $book = $this->bookManager->getBook($bookId);
         Utils::Redirect('mon-compte');
     }
 }

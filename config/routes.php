@@ -11,14 +11,14 @@ use App\Controller\UserController;
 return[
     ["/", HomeController::class, "showHomepage"],
     ["/nos-livres", LibraryController::class, "showLibrary"],
-    ["/nos-livres/{id:\d+}", BookController::class, "showBook"],
+    ["/nos-livres/{bookId:\d+}", BookController::class, "showBook"],
     ["/chat", ChatController::class, "showChat"],
-    ["/chat/{id:\d+}", ChatController::class, "showConversation"],
+    ["/chat/{conversationId:\d+}", ChatController::class, "showConversation"],
     ["/inscription", UserController::class, "signUp"],
     ["/connexion", UserController::class, "logIn"],
     ["/deconnexion", UserController::class, "logOut"],
     ["/mon-compte", UserController::class, "showPrivateUserPage"],
     ["/editer-utilisateur", UserController::class, "modifyUser"],
-    ["/utilisateur/{id:\d+}", UserController::class, "showPublicUserPage"],
-    ["/editer-livre/{id:\d+}", BookController::class, "editBook"],
+    ["/utilisateur/{userId:\d+}", UserController::class, "showPublicUserPage"],
+    ["/editer-livre/{bookId:\d+}", BookController::class, "editBook"],
 ];

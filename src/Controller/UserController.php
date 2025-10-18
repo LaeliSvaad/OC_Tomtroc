@@ -98,16 +98,14 @@ class UserController extends AbstractController
         Utils::redirect("");
     }
 
-    public function showPublicUserPage($userId): void
+    public function showPublicUserPage(int $userId): void
     {
        if(is_null($userId)){
-           $this->render("Erreur","error-page");
+           $this->render("Erreur","404-error");
        }
        else
        {
-           $userId = (int)$userId;
-           $userManager = new UserManager();
-           $user = $userManager->getPublicUserById($userId);
+           $user = $this->userManager->getPublicUserById($userId);
            if (!is_null($user)) {
                $libraryManager = new LibraryManager();
                $userLibrary = $libraryManager->getLibraryByUserId($userId);
