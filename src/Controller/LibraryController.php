@@ -1,15 +1,18 @@
 <?php
 namespace App\Controller;
 
+use App\Http\Session\SessionStorageInterface;
 use App\Manager\LibraryManager;
+use App\View\View;
 
 class LibraryController extends AbstractController
 {
     private readonly LibraryManager $libraryManager;
 
-    public function __construct()
+    public function __construct(View $view, SessionStorageInterface $session)
     {
         $this->libraryManager = new LibraryManager();
+        parent::__construct($view, $session);
     }
     public function showLibrary() : void
     {

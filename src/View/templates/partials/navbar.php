@@ -13,14 +13,14 @@
                 <a class="nav-link <?php echo ($current_page === 'home') ? 'active' : ''; ?>" href="/">Accueil</a>
             </li>
             <li>
-                <a class="nav-link <?php echo ($current_page === 'our-books') ? 'active' : ''; ?>" href="<?= \App\Utils\Url::to('/nos-livres') ?>">Nos livres</a>
+                <a class="nav-link <?php echo ($current_page === 'our-books') ? 'active' : ''; ?>" href="<?= \App\Utils\Url::to('nos-livres') ?>">Nos livres</a>
             </li>
         </ul>
 
         <ul class="nav navbar-nav navbar-right">
-            <?php if (isset($_SESSION['user'])): ?>
+            <?php if ($session->get('userId')): ?>
                 <li>
-                    <a class="nav-link <?php echo ($current_page === 'conversation') ? 'active' : ''; ?>" id="chat-nav-link" href="<?= \App\Utils\Url::to('/chat') ?>">
+                    <a class="nav-link <?php echo ($current_page === 'conversation') ? 'active' : ''; ?>" id="chat-nav-link" href="<?= \App\Utils\Url::to('chat') ?>">
                         <img src="<?= \App\Utils\Url::to('assets/images/messaging-icon.png') ?>" alt="messaging icon" >
                         &nbsp;<span>Messagerie</span>
                     </a>
@@ -33,7 +33,7 @@
                 </li>
             <?php else: ?>
                 <li>
-                    <a class="nav-link <?php echo ($current_page === 'connexion' || $current_page === 'registration-form') ? 'active' : ''; ?>" href="<?= \App\Utils\Url::to('formulaire-connexion') ?>">Connexion</a>
+                    <a class="nav-link <?php echo ($current_page === 'connexion' || $current_page === 'registration-form') ? 'active' : ''; ?>" href="<?= \App\Utils\Url::to('connexion') ?>">Connexion</a>
                 </li>
             <?php endif; ?>
         </ul>

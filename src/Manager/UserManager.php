@@ -109,7 +109,9 @@ class UserManager extends AbstractEntityManager
      */
     public function getUserByLoginInfo(string $nickname, string $email) : ?User
     {
-        $sql = "SELECT `user`.`id`, `user`.`password` FROM `user` WHERE `nickname` = :nickname && `email` = :email";
+        $sql = "SELECT `user`.`id` as userId, `user`.`password`
+                FROM `user` 
+                WHERE `nickname` = :nickname && `email` = :email";
         $result = $this->db->query($sql, ['nickname' => $nickname, 'email' => $email]);
         $user = $result->fetch();
         if ($user) {

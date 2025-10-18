@@ -14,7 +14,7 @@ class LibraryManager extends AbstractEntityManager
 {
     public function getHomepageBooks(): ?Library
     {
-        $status = BookStatus::available->value;
+        $status = BookStatus::AVAILABLE->value;
 
         $sql = "SELECT
                     `user`.nickname, 
@@ -45,7 +45,7 @@ class LibraryManager extends AbstractEntityManager
 
     public function getAvailableBooks(): ?Library
     {
-        $status = BookStatus::available->value;
+        $status = BookStatus::AVAILABLE->value;
 
         $sql = "SELECT
                 `user`.nickname, 
@@ -78,7 +78,7 @@ class LibraryManager extends AbstractEntityManager
 
     public function getBooksByTitle(string $title): ?Library
     {
-        $status = BookStatus::available->value;
+        $status = BookStatus::AVAILABLE->value;
 
         $sql = "SELECT
                     `user`.nickname, 

@@ -6,56 +6,52 @@ use App\Manager\ChatManager;
 use App\Manager\ConversationManager;
 use App\Manager\LibraryManager;
 use App\Model\Chat;
+use App\Http\Session\SessionStorageInterface;
+use App\Http\Request;
 use App\Utils\Utils;
+use App\View\View;
 
 class UserController extends AbstractController
 {
     private readonly UserManager $userManager;
-    public function __construct()
+    private Request $request;
+    public function __construct(View $view, SessionStorageInterface $session, Request $request)
     {
+        $this->request = $request;
+        parent::__construct($view, $session);
         $this->userManager= new UserManager();
+
     }
-    public function showLogInForm() : void
+
+    public function logIn(): void
     {
-        $this->render("Connexion", "log-in");
-    }
+        if($this->request->isPost())
+        {
+            $nickname = $this->request->post('nickname', '');
+            $email = $this->request->post('email', '');
+            $password = $this->request->post('password', '');
 
-    public function showSignUpForm() : void
-    {
-        $this->render("Inscription","sign-up");
-    }
+            $user = $this->userManager->getUserByLoginInfo($nickname, $email);
 
-    public function logIn(){
-        $nickname = Utils::request("nickname");
-        $email = Utils::request("email");
-        $password = Utils::request("password");
-        //On sécurise les entrées utilisateur
-        $nickname = Utils::controlUserInput($nickname);
-        $email = Utils::controlUserInput($email);
+            if(!is_null($user))
+            {
+                if (!password_verify($password, $user->getPassword())) {
+                    throw new \Exception("Une erreur est survenue lors de l'authentification.");
+                }
 
-        // On vérifie que les données sont valides.
-        if (empty($nickname) || empty($email) || empty($password)) {
-            throw new \Exception("Tous les champs sont obligatoires.");
+                $this->session->set('userId', $user->getUserId());
+                $this->session->regenerate();
+                Utils::redirect("mon-compte");
+            }
+            else
+            {
+                $this->render("Connexion", "log-in");
+            }
         }
-
-        // On vérifie que l'utilisateur existe.
-        $userManager = new UserManager();
-        $user = $userManager->getUserByLoginInfo($nickname, $email);
-
-        if (!$user) {
-            throw new \Exception("Une erreur est survenue lors de l'authentification.");
+        else
+        {
+            $this->render("Connexion", "log-in");
         }
-
-        // On vérifie que le mot de passe est correct.
-        if (!password_verify($password, $user->getPassword())) {
-            throw new \Exception("Une erreur est survenue lors de l'authentification.");
-        }
-
-        // On connecte l'utilisateur.
-        $_SESSION['user'] = $user->getId();
-
-        //On redirige vers la page utilisateur
-        Utils::redirect("mon-compte");
     }
 
     public function signUp(){
@@ -119,21 +115,20 @@ class UserController extends AbstractController
                $user->setChat($chat);
            }
 
-           $this->render("utilisateur", "user-public-account", ['user' => $user]);
+           $this->render("Utilisateur", "user-public-account", ['user' => $user]);
        }
     }
 
     public function showPrivateUserPage(): void
     {
-        if(!isset($_SESSION['user']))
+        if(is_null($this->session->get('userId')))
         {
-            $this->render("Erreur", "error-page");
+            $this->render("Erreur", "404-error");
         }
         else
         {
-            $userId = $_SESSION['user'];
-            $userManager = new UserManager();
-            $user = $userManager->getPrivateUserById($userId);
+            $userId =$this->session->get('userId');
+            $user = $this->userManager->getPrivateUserById($userId);
 
             if(!is_null($user))
             {
@@ -144,9 +139,7 @@ class UserController extends AbstractController
                 $userChat = $chatManager->getChat($userId);
                 $user->setChat($userChat);
             }
-
-            $this->render("utilisateur", "user-private-account", ['user' => $user]);
-
+            $this->render("Utilisateur", "user-private-account", ['user' => $user, 'current_page' => 'user-private-account',]);
         }
     }
 

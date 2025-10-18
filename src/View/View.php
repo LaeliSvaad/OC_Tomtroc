@@ -1,41 +1,47 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\View;
 
+use App\Http\Session\SessionStorageInterface;
+
 final class View
 {
-    private string $title;
-    private string $template;
+    private ?SessionStorageInterface $session;
     private string $layout;
+    private string $title;
 
-
-    public function __construct(string $title, string $template, string $layout = 'layout')
+    public function __construct(?SessionStorageInterface $session = null, string $layout = 'layout')
     {
-        $this->title = $title;
-        $this->template = $template;
+        $this->session = $session;
         $this->layout = $layout;
+        $this->title = '';
     }
 
     public function render(string $title, string $viewName, array $params = []): void
     {
-        $templatePath = __DIR__ . "/templates/{$viewName}.php";
-        $layoutPath = __DIR__ . "/templates/{$this->layout}.php";
+        $this->title = $title;
 
-        if (!file_exists($templatePath)) {
-            throw new \RuntimeException("Template {$viewName}.php introuvable.");
+        $shared = [
+            'session' => $this->session,
+            'current_page' => $viewName,
+        ];
+
+        extract(array_merge($shared, $params), EXTR_SKIP);
+
+        // chemin du template principal
+        $file = __DIR__ . "/templates/{$viewName}.php";
+
+        if (!file_exists($file)) {
+            throw new \RuntimeException("Template introuvable : {$file}");
         }
 
-        // Extraction des variables (ex: $chat, $conversation, etc.)
-        extract($params);
-        $this->title = $title;
-        // On capture le contenu du template dans une variable
+        // capture du contenu principal dans $content
         ob_start();
-        require $templatePath;
+        require $file;
         $content = ob_get_clean();
 
-        // On inclut le layout principal, qui utilise $content
-        require $layoutPath;
+        // inclure le layout (qui utilisera $content)
+        require __DIR__ . "/templates/{$this->layout}.php";
     }
 }

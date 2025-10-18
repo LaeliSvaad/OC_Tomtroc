@@ -5,9 +5,24 @@ namespace App\Routing;
 
 use App\Config\Config;
 use App\Controller\NotFoundController;
+use App\Http\Session\PhpSessionStorage;
+use App\Http\Session\SessionStorageInterface;
+use App\Http\Request;
+use App\View\View;
 
 final class Router
 {
+    private Request $request;
+    private SessionStorageInterface $session;
+    private View $view;
+    public function __construct()
+    {
+        $this->session = new PhpSessionStorage();
+        $this->session->start();
+
+        $this->request = new Request();
+        $this->view = new View($this->session);
+    }
     public function handleRequest(string $uri): void
     {
         $path = parse_url($uri, PHP_URL_PATH);
@@ -15,7 +30,7 @@ final class Router
         foreach (Config::get('routes') as [$routePath, $controllerClass, $methodName]) {
             //Route statique exacte
             if ($routePath === $path) {
-                $controller = new $controllerClass();
+                $controller = new $controllerClass($this->view, $this->session, $this->request);
                 $controller->$methodName();
                 return;
             }
@@ -30,10 +45,10 @@ final class Router
                     $params[$name] = $matches[$name] ?? null;
                 }
 
-                $controller = new $controllerClass();
+                $controller = new $controllerClass($this->view, $this->session, $this->request);
                 $convertedParams = $this->convertParamsForMethod($controllerClass, $methodName, $params);
                 if ($convertedParams === false) {
-                    (new NotFoundController())->show404();
+                    (new NotFoundController($this->view, $this->session))->show404();
                     return;
                 }
 
@@ -43,7 +58,7 @@ final class Router
         }
 
         //Aucune route ne correspond
-        (new NotFoundController())->show404();
+        (new NotFoundController($this->view, $this->session))->show404();
     }
 
     /**

@@ -1,14 +1,23 @@
 <?php
 namespace App\Controller;
 
+use App\Http\Session\SessionStorageInterface;
 use App\Manager\UserManager;
 use App\Manager\MessageManager;
 use App\Manager\ConversationManager;
 use App\Manager\ChatManager;
 use App\Utils\Utils;
+use App\View\View;
 
 class ChatController extends AbstractController
 {
+    private readonly ChatManager $chatManager;
+
+    public function __construct(View $view, SessionStorageInterface $session)
+    {
+        $this->chatManager = new ChatManager();
+        parent::__construct($view, $session);
+    }
     public function showChat() : void
     {
         $connectedUserId = $_SESSION["user"];

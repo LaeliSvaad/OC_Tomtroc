@@ -24,7 +24,7 @@
 <?php include __DIR__ . '/partials/navbar.php'; ?>
 
 <main>
-    <?= $content ?> <!-- Contenu spécifique à chaque page -->
+    <?= $content ?>
 </main>
 
 <?php include __DIR__ . '/partials/footer.php'; ?>

@@ -4,33 +4,29 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\View\View;
+use App\Http\Session\SessionStorageInterface;
 
 abstract class AbstractController
 {
-    /**
-    * Rendu d'une vue avec titre et données
-    */
+    protected View $view;
+    protected SessionStorageInterface $session;
+
+    public function __construct(View $view, SessionStorageInterface $session)
+    {
+        $this->view = $view;
+        $this->session = $session;
+    }
+
     protected function render(string $title, string $viewName, array $data = []): void
     {
-        $view = new View($title, $viewName);
-        $view->render($title, $viewName, $data);
-    }
+        $shared = [
+            'session' => $this->session,
+            'current_page' => $viewName,
+        ];
 
-    /**
-    * Redirection HTTP
-    */
-    protected function redirect(string $url): never
-    {
-        header("Location: {$url}");
-        exit;
-    }
-
-    /**
-    * Vérifie la session utilisateur
-    */
-    protected function isAuthenticated(): bool
-    {
-        return isset($_SESSION['user']);
+        // utilise l'instance View injectée (NE PAS instancier une nouvelle View ici)
+        $this->view->render($title, $viewName, array_merge($shared, $data));
     }
 }
+
 
