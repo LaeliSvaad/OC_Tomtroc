@@ -10,7 +10,7 @@ use App\Model\Message;
 class ConversationManager extends AbstractEntityManager
 {
 
-    public function getConversationByUsersId(int $connectedUserId, int $interlocutorId) : ?Conversation
+    public function getConversationByUsersIds(int $connectedUserId, int $interlocutorId) : ?Conversation
     {
         $sql = "SELECT
                     `user`.`nickname`, 
@@ -46,7 +46,6 @@ class ConversationManager extends AbstractEntityManager
                 $conversation->addMessage($element["message"]);
             }
             return $conversation;
-
         }
         return null;
     }
@@ -79,7 +78,7 @@ class ConversationManager extends AbstractEntityManager
             $conversation->setConversationId($conversationId);
 
             foreach ($db_array as $element) {
-                $element["datetime"] = new DateTime($element["datetime"]);
+                $element["datetime"] = new \DateTime($element["datetime"]);
                 $element["sender"] = new User($element);
                 $element["message"] = new Message($element);
                 if($element["sender"]->getUserId() === $userId) {

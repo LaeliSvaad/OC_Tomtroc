@@ -16,8 +16,8 @@
                     <div><span class="grey-text">Membre depuis <?= \App\Utils\Utils::dateInterval($user->getRegistrationDate()) ?></span></div>
                     <div><span class="uppercase-text">Bibliothèque</span></div>
                     <div><img src="<?= \App\Utils\Url::to('assets/images/library-icon.png') ?>" alt="library icon">&nbsp;<span><?= $user->getLibrary()->countBooks() ?> livres</span></div>
-                    <?php if (isset($_SESSION["user"])): ?>
-                        <a href="<?= \App\Utils\Url::to('conversation/' . $user->getUserId()) ?>" class="button-link">
+                    <?php if (!is_null($this->session->get('userId'))): ?>
+                        <a href="<?= \App\Utils\Url::to('chat/interlocuteur-' . $user->getUserId()) ?>" class="button-link">
                             <button class="btn transparent-button">Écrire un message</button>
                         </a>
                     <?php else: ?>

@@ -1,95 +1,100 @@
 <?php
 namespace App\Controller;
 
+use App\Http\Request;
 use App\Http\Session\SessionStorageInterface;
 use App\Manager\UserManager;
 use App\Manager\MessageManager;
 use App\Manager\ConversationManager;
 use App\Manager\ChatManager;
+use App\Model\Conversation;
 use App\Utils\Utils;
 use App\View\View;
 
 class ChatController extends AbstractController
 {
     private readonly ChatManager $chatManager;
+    private readonly UserManager $userManager;
+    private readonly ConversationManager $conversationManager;
+    private Request $request;
 
-    public function __construct(View $view, SessionStorageInterface $session)
+    public function __construct(View $view, SessionStorageInterface $session, Request $request)
     {
-        $this->chatManager = new ChatManager();
+        $this->request = $request;
         parent::__construct($view, $session);
+        $this->chatManager= new ChatManager();
+        $this->userManager= new UserManager();
+        $this->conversationManager= new ConversationManager();
+
     }
-    public function showChat() : void
+
+    public function showChat(?string $type = null, ?int $id = null) : void
     {
-        $connectedUserId = $_SESSION["user"];
-        $interlocutorId = Utils::request("interlocutorId", -1);
-        $conversationId = Utils::request("conversationId", NULL);
+        /* On récupère l'utilisateur connecté*/
+        $connectedUserId = $this->session->get('userId');
+        if(!is_null($connectedUserId))
+            $connectedUser = $this->userManager->getPublicUserById($connectedUserId);
 
-        /*On récupère d'abord les données des 2 utilisateurs: l'interlocuteur de la conversation affichée et l'utilisateur connecté */
-        $userManager = new UserManager();
-        $interlocutor = $userManager->getPublicUserById($interlocutorId);
-        $connectedUser = $userManager->getPublicUserById($connectedUserId);
-
-        /* On récupère la liste de conversation avec le dernier message de chaque conversation pour l'utilisateur connecté */
-        $chatManager = new ChatManager();
-        $chat = $chatManager->getChat($connectedUserId);
+        /* On récupère le chat de l'utilisateur connecté */
+        $chat = $this->chatManager->getChat($connectedUserId);
         $chat->setConnectedUser($connectedUser);
 
-        /* On récupère le tableau d'ids des messages non-lus par l'utilisateur connecté */
-        $chatManager->getUnreadMessagesIds($connectedUserId, $chat);
-
-
-        if(empty($chat->getChat()) && $interlocutorId === -1){
-            /* Si la liste de conversations est vide et qu'il n'y a pas d'interlocuteur potentiel, on ne va pas plus loin et on envoie la vue */
-            $this->render("chat", 'chat', ['chat' => $chat, 'conversation' => NULL]);
-        }
-        else if(empty($chat->getChat()) && $interlocutorId != -1){
-            /* Liste de conversations vide, mais interlocuteur demandé:
-            on crée une conversation vierge qu'on envoie en DB et dont on récupère l'id */
-            $conversationManager = new ConversationManager();
-            $conversation = new Conversation();
-            $conversation->setInterlocutor($interlocutor);
-            if($conversationManager->addConversation($connectedUserId, $interlocutorId) === true)
-                $conversation->setConversationId($conversationManager->getLastConversationId());
+        if(is_null($type))
+        {
+            if(empty($chat->getChat()[0]))
+            {
+                echo "<br><br>/chat: je suis un chat complètement vide";
+                $this->render("chat", 'chat', ['chat' => $chat, 'conversation' => NULL]);
+            }
             else
-                throw new Exception("Une erreur est survenue lors de l'initialisation de la conversation.");
+            {
+                echo "<br><br>/chat: je suis un chat avec des messages";
+                $this->chatManager->getUnreadMessagesIds($connectedUserId, $chat);
+                $conversationId = $chat->getChat()[0]->getConversationId();
+                $conversation = $this->conversationManager->getConversationById($conversationId, $connectedUserId);
+                $interlocutor = $this->conversationManager->getInterlocutor($connectedUserId, $conversationId);
+                $conversation->setInterlocutor($interlocutor);
+                $this->render("chat", 'chat', ['chat' => $chat, 'conversation' => $conversation]);
+            }
+        }
+        else if($type === "conversation")
+        {
+            echo "<br><br>/chat/conversation: je suis un chat avec des messages";
+            $conversation = $this->conversationManager->getConversationById($id, $connectedUserId);
+            $interlocutor = $this->conversationManager->getInterlocutor($connectedUserId, $id);
+            $conversation->setInterlocutor($interlocutor);
             $this->render("chat", 'chat', ['chat' => $chat, 'conversation' => $conversation]);
         }
-        else{
-            /* On récupère une conversation à afficher entièrement */
-            $conversationManager = new ConversationManager();
-            if($interlocutor != NULL){
-                /* Si l'interlocuteur existe, on charge la conversation entre l'utilisateur connecté et l'interlocuteur: */
-                $conversation = $conversationManager->getConversationByUsersId($connectedUserId, $interlocutorId);
-                if($conversation != NULL){
-                    /* Le conversation existe, on lui attribue l'interlocuteur */
-                    $conversation->setInterlocutor($interlocutor);
-                }
-                else{
-                    /* Le conversation n'existe pas, on lui attribue l'interlocuteur et on l'initialise */
-                    $conversationManager = new ConversationManager();
+        else if($type === "interlocuteur")
+        {
+            $interlocutor = $this->userManager->getPublicUserById($id);
+            $conversation = $this->conversationManager->getConversationByUsersIds($connectedUserId, $id);
+            if(is_null($conversation))
+            {
+                echo "<br><br>/chat/interlocuteur: je suis un chat qui n'a pas encore cette conversation";
+                if($this->conversationManager->addConversation($connectedUserId, $id) === true)
+                {
                     $conversation = new Conversation();
-                    $conversation->setInterlocutor($interlocutor);
-                    if($conversationManager->addConversation($connectedUserId, $interlocutorId) === true)
-                        $conversation->setConversationId($conversationManager->getLastConversationId());
-                    else
-                        throw new Exception("Une erreur est survenue lors de l'initialisation de la conversation.");
+                    $conversation->setConversationId($this->conversationManager->getLastConversationId());
                 }
+                else
+                    throw new \Exception("Une erreur est survenue lors de l'initialisation de la conversation.");
 
+                echo "<br><br>/chat/interlocuteur: je suis maintenant un chat avec cette nouvelle conversation";
+                $conversation->setInterlocutor($interlocutor);
             }
-            else{
-                /* Si pas d'interlocuteur: */
-                if($conversationId === NULL){
-                    /* si pas d'id de conversation, on prend l'id de la conversation comportant le message le + récent */
-                    $conversationId = $chat->getChat()[0]->getConversationId();
-                }
-                $conversation = $conversationManager->getConversationById($conversationId, $connectedUserId);
-                $interlocutor = $conversationManager->getInterlocutor($connectedUserId, $conversationId);
+            else
+            {
                 $conversation->setInterlocutor($interlocutor);
             }
             $this->render("chat", 'chat', ['chat' => $chat, 'conversation' => $conversation]);
         }
-
+        else{
+            $this->render("Erreur", '404-error');
+        }
     }
+
+
 
     public function sendMessage() : void
     {

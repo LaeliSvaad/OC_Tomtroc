@@ -20,7 +20,7 @@
         <ul class="nav navbar-nav navbar-right">
             <?php if ($session->get('userId')): ?>
                 <li>
-                    <a class="nav-link <?php echo ($current_page === 'conversation') ? 'active' : ''; ?>" id="chat-nav-link" href="<?= \App\Utils\Url::to('chat') ?>">
+                    <a class="nav-link <?php echo ($current_page === 'chat') ? 'active' : ''; ?>" id="chat-nav-link" href="<?= \App\Utils\Url::to('chat') ?>">
                         <img src="<?= \App\Utils\Url::to('assets/images/messaging-icon.png') ?>" alt="messaging icon" >
                         &nbsp;<span>Messagerie</span>
                     </a>

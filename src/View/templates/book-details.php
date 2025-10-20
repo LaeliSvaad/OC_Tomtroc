@@ -1,5 +1,5 @@
 <?php
-$connectedUserId = $_SESSION["user"] ?? null;
+$connectedUserId = $this->session->get('userId') ?? null;
 $author = $book->getAuthor();
 $user = $book->getUser();
 $isOwner = $connectedUserId === $user->getUserId();
@@ -34,7 +34,7 @@ $userId = $user->getUserId();
                             <?= !$connectedUserId
                                 ? "<span>Créez un compte ou connectez-vous pour lui envoyer un message.</span>"
                                 : (!$isOwner
-                                    ? "<a class='button-link' href='" . \App\Utils\Url::to('/chat/' . $userId) . "'><button class='btn green-button'>Envoyer un message</button></a>"
+                                    ? "<a class='button-link' href='" . \App\Utils\Url::to('/chat/interlocuteur-' . $userId) . "'><button class='btn green-button'>Envoyer un message</button></a>"
                                     : "") ?>
                         </div>
                     </div>

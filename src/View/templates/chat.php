@@ -9,14 +9,14 @@
                 $conversations = $chat->getChat();
                 foreach($conversations as $conv) :
                 ?>
-                    <a href="index.php?action=conversation&conversationId=<?= $conv->getConversationId()?>">
+                    <a href="<?= \App\Utils\Url::to('chat/conversation-' . $conv->getConversationId())?>">
                         <?php if($conversation->getConversationId() === $conv->getConversationId()): ?>
                         <div class="row conversation-overview active-conversation-overview">
                         <?php else: ?>
                         <div class="row conversation-overview">
                         <?php endif; ?>
                             <div class="col-xs-2">
-                                <img class="profile-picture medium-profile-picture" src="<?= $conv->getInterlocutor()->getPicture() ?>" alt="<?= $conv->getInterlocutor()->getNickname() ?>">
+                                <img class="profile-picture medium-profile-picture" src="<?=  \App\Utils\Url::to($conv->getInterlocutor()->getPicture()) ?>" alt="<?= $conv->getInterlocutor()->getNickname() ?>">
                             </div>
                             <?php if($conv->getConversation()[0]->isConnectedUserMessage() === false && $conv->getConversation()[0]->getSeenByRecipient() === false): ?>
                             <div class="col-xs-10 unseen-message">
@@ -25,7 +25,7 @@
                             <?php endif; ?>
                                 <div class="message-overview-info">
                                     <span><?= $conv->getInterlocutor()->getNickname() ?></span>
-                                    <span><?= Utils::convertDateToSmallFormat($conv->getConversation()[0]->getDatetime()) ?></span>
+                                    <span><?= \App\Utils\Utils::convertDateToSmallFormat($conv->getConversation()[0]->getDatetime()) ?></span>
                                 </div>
                                 <div class="message-overview"><?= $conv->getConversation()[0]->getText()?></div>
                             </div>
@@ -37,7 +37,7 @@
             <?php if(!is_null($conversation)): ?>
             <div class="conversation">
                 <div class="conversation-header">
-                    <img class="profile-picture medium-profile-picture" src="<?= $conversation->getInterlocutor()->getPicture() ?>" alt="<?= $conversation->getInterlocutor()->getNickname() ?> profile picture">
+                    <img class="profile-picture medium-profile-picture" src="<?= \App\Utils\Url::to($conversation->getInterlocutor()->getPicture()) ?>" alt="<?= $conversation->getInterlocutor()->getNickname() ?> profile picture">
                     &nbsp;<span><?= $conversation->getInterlocutor()->getNickname() ?></span>
                 </div>
                 <div class="conversation-body">
@@ -49,9 +49,9 @@
                         <?php else: ?>
                         <div class="align-left">
                             <div class="message-header">
-                                <img class="profile-picture mini-profile-picture" src="<?= $message->getSender()->getPicture() ?>" alt="<?= $message->getSender()->getNickname() ?> profile picture">
+                                <img class="profile-picture mini-profile-picture" src="<?= \App\Utils\Url::to($message->getSender()->getPicture()) ?>" alt="<?= $message->getSender()->getNickname() ?> profile picture">
                         <?php endif;?>
-                                <?= Utils::convertDateToMediumFormat($message->getDatetime()) ?>
+                                <?= \App\Utils\Utils::convertDateToMediumFormat($message->getDatetime()) ?>
                             </div>
                         <?php if($message->isConnectedUserMessage() === true):?>
                             <div class="message connected-user-message">
@@ -70,7 +70,7 @@
                             $unseenMessageIds[] = $message->getId();
                         ?>
                     <?php endforeach;  endif;?>
-                    <form action="index.php?action=send-message" method="post">
+                    <form action="<?= \App\Utils\Url::to('send-message') ?>" method="post">
                         <input type="hidden" name="conversationId" value="<?= $conversation->getConversationId(); ?>" />
                         <input type="hidden"  name="seenByRecipientMessagesIds" value="<?= json_encode($chat->getUnreadMessagesIds()); ?>" />
                         <div class="chat-message-form">

@@ -13,7 +13,7 @@ return[
     ["/nos-livres", LibraryController::class, "showLibrary"],
     ["/nos-livres/{bookId:\d+}", BookController::class, "showBook"],
     ["/chat", ChatController::class, "showChat"],
-    ["/chat/{conversationId:\d+}", ChatController::class, "showConversation"],
+    ["/chat/{type}-{id:\d+}", ChatController::class, "showChat"],
     ["/inscription", UserController::class, "signUp"],
     ["/connexion", UserController::class, "logIn"],
     ["/deconnexion", UserController::class, "logOut"],

@@ -51,7 +51,6 @@ final class Router
                     (new NotFoundController($this->view, $this->session))->show404();
                     return;
                 }
-
                 $controller->$methodName(...$convertedParams);
                 return;
             }
@@ -75,7 +74,24 @@ final class Router
      */
     private function convertToNamedRegex(string $routePath): array
     {
+
         $paramNames = [];
+
+        // Si le chemin contient un bloc optionnel, on le rend facultatif via regex
+        // Exemple : /chat/{type}-{id:\d+}? => /chat(?:/(?P<type>[^/]+)-(?P<id>\d+))?
+        $routePath = preg_replace_callback(
+            '#\{([a-zA-Z_][a-zA-Z0-9_]*)(?::([^}]+))?\}\?#',
+            function ($matches) use (&$paramNames) {
+                $name = $matches[1];
+                $constraint = $matches[2] ?? '[^/]+';
+                $paramNames[] = $name;
+                // Le bloc optionnel entier devient facultatif (?: ... )?
+                return '(?P<' . $name . '>' . $constraint . ')?';
+            },
+            $routePath
+        );
+
+        // Puis on traite les paramètres normaux (non optionnels)
         $regex = preg_replace_callback(
             '#\{([a-zA-Z_][a-zA-Z0-9_]*)(?::([^}]+))?\}#',
             function ($matches) use (&$paramNames) {
@@ -86,7 +102,11 @@ final class Router
             },
             $routePath
         );
+
+        // Gérer les séparateurs éventuels comme {type}-{id}
+        $regex = str_replace('}-', '}-', $regex); // garder les tirets
         $regex = "#^" . $regex . "$#";
+
         return [$regex, $paramNames];
     }
 
@@ -108,21 +128,37 @@ final class Router
 
         $converted = [];
 
+        // Keep an ordered list of raw param values as they come from the route
+        // (useful if we need to map positionally)
+        $rawOrdered = array_values($rawParams);
+        $rawNames = array_keys($rawParams);
+        $posIndex = 0; // index into $rawOrdered when falling back to positional mapping
+
         foreach ($ref->getParameters() as $refParam) {
             $name = $refParam->getName();
-            if (!array_key_exists($name, $rawParams)) {
-                if ($refParam->isDefaultValueAvailable()) {
-                    $converted[] = $refParam->getDefaultValue();
-                    continue;
+
+            // If param exists by name in route, use it
+            if (array_key_exists($name, $rawParams)) {
+                $raw = $rawParams[$name];
+            } else {
+                // Fallback: try to map by position (only if available)
+                if (isset($rawOrdered[$posIndex])) {
+                    $raw = $rawOrdered[$posIndex];
+                    $posIndex++;
+                } else {
+                    // No value available: check defaults / nullable
+                    if ($refParam->isDefaultValueAvailable()) {
+                        $converted[] = $refParam->getDefaultValue();
+                        continue;
+                    }
+                    if ($refParam->allowsNull()) {
+                        $converted[] = null;
+                        continue;
+                    }
+                    return false;
                 }
-                if ($refParam->allowsNull()) {
-                    $converted[] = null;
-                    continue;
-                }
-                return false;
             }
 
-            $raw = $rawParams[$name];
             $type = $refParam->getType();
 
             if ($type === null) {
