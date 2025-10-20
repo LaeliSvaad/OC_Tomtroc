@@ -28,7 +28,7 @@ class MessageManager extends AbstractEntityManager
             SET `seen_by_recipient` = TRUE
             WHERE `id` IN (" . implode(',', $placeholders) . ")";
 
-        $result = $this->db->query($sql,$params);
+        $result = $this->db->query($sql, $params);
         return $result->rowCount() > 0;
     }
 }

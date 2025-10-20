@@ -8,6 +8,7 @@ use App\Manager\MessageManager;
 use App\Manager\ConversationManager;
 use App\Manager\ChatManager;
 use App\Model\Conversation;
+use App\Model\Message;
 use App\Utils\Utils;
 use App\View\View;
 
@@ -35,31 +36,71 @@ class ChatController extends AbstractController
         if(!is_null($connectedUserId))
             $connectedUser = $this->userManager->getPublicUserById($connectedUserId);
 
+        $conversationId = $this->request->post('conversationId');
+        $text = $this->request->post('message');
+        $seenByRecipientMessagesIds = $this->request->post('seenByRecipientMessagesIds');
+
+        if(isset($conversationId) && isset($text))
+        {
+            if(!is_null($seenByRecipientMessagesIds))
+                $seenByRecipientMessagesIds = json_decode($seenByRecipientMessagesIds);
+            $messageManager = new MessageManager();
+            $message = new Message();
+            $message->setConversationId($conversationId);
+            $message->setText($text);
+            $message->setSender($connectedUser);
+            $message->setSeenByRecipient(false);
+            if($messageManager->sendMessage($message) != 0)
+            {
+                if(!empty($seenByRecipientMessagesIds))
+                {
+                    $placeholders = [];
+                    $params = [];
+                    foreach ($seenByRecipientMessagesIds as $index => $id) {
+                        $placeholder = ":id{$index}";
+                        $placeholders[] = $placeholder;
+                        $params[$placeholder] = (int)$id;
+                    }
+                    $messageManager->updateMessageStatus($params, $placeholders);
+                }
+                $chat = $this->chatManager->getChat($connectedUserId);
+                $chat->setConnectedUser($connectedUser);
+                $this->chatManager->getUnreadMessagesIds($connectedUserId, $chat);
+                $conversation = $this->conversationManager->getConversationById($conversationId, $connectedUserId);
+                $this->render("chat", 'chat', ['chat' => $chat, 'conversation' => $conversation]);
+            }
+            else
+            {
+                throw new \Exception("Une erreur est survenue lors de l'envoi du message");
+            }
+        }
+        
         /* On récupère le chat de l'utilisateur connecté */
         $chat = $this->chatManager->getChat($connectedUserId);
         $chat->setConnectedUser($connectedUser);
 
         if(is_null($type))
         {
-            if(empty($chat->getChat()[0]))
+            if(!empty($chat->getChat()[0]))
             {
-                echo "<br><br>/chat: je suis un chat complètement vide";
-                $this->render("chat", 'chat', ['chat' => $chat, 'conversation' => NULL]);
-            }
-            else
-            {
-                echo "<br><br>/chat: je suis un chat avec des messages";
-                $this->chatManager->getUnreadMessagesIds($connectedUserId, $chat);
                 $conversationId = $chat->getChat()[0]->getConversationId();
                 $conversation = $this->conversationManager->getConversationById($conversationId, $connectedUserId);
+
+                $this->chatManager->getUnreadMessagesIds($connectedUserId, $chat);
+
                 $interlocutor = $this->conversationManager->getInterlocutor($connectedUserId, $conversationId);
                 $conversation->setInterlocutor($interlocutor);
                 $this->render("chat", 'chat', ['chat' => $chat, 'conversation' => $conversation]);
             }
+            else
+            {
+
+                $this->render("chat", 'chat', ['chat' => $chat, 'conversation' => NULL]);
+            }
         }
         else if($type === "conversation")
         {
-            echo "<br><br>/chat/conversation: je suis un chat avec des messages";
+
             $conversation = $this->conversationManager->getConversationById($id, $connectedUserId);
             $interlocutor = $this->conversationManager->getInterlocutor($connectedUserId, $id);
             $conversation->setInterlocutor($interlocutor);
@@ -71,7 +112,7 @@ class ChatController extends AbstractController
             $conversation = $this->conversationManager->getConversationByUsersIds($connectedUserId, $id);
             if(is_null($conversation))
             {
-                echo "<br><br>/chat/interlocuteur: je suis un chat qui n'a pas encore cette conversation";
+
                 if($this->conversationManager->addConversation($connectedUserId, $id) === true)
                 {
                     $conversation = new Conversation();
@@ -80,7 +121,7 @@ class ChatController extends AbstractController
                 else
                     throw new \Exception("Une erreur est survenue lors de l'initialisation de la conversation.");
 
-                echo "<br><br>/chat/interlocuteur: je suis maintenant un chat avec cette nouvelle conversation";
+
                 $conversation->setInterlocutor($interlocutor);
             }
             else
