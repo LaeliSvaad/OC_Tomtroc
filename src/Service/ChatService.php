@@ -1,96 +1,80 @@
 <?php
-    declare(strict_types=1);
+namespace App\Service;
 
-    namespace App\Service;
+use App\Manager\ChatManager;
+use App\Manager\ConversationManager;
+use App\Manager\UserManager;
+use App\Http\Request;
+use App\Model\Conversation;
+use App\Manager\MessageManager;
 
-    use App\Manager\UserManager;
-    use App\Manager\ChatManager;
-    use App\Manager\ConversationManager;
-    use App\Model\Conversation;
-    use App\Model\Chat;
-    use Exception;
+class ChatService
+{
+    private ChatManager $chatManager;
+    private ConversationManager $conversationManager;
+    private UserManager $userManager;
 
-    final class ChatService
+    public function __construct()
     {
-        public function __construct(
-        private readonly UserManager $userManager,
-        private readonly ChatManager $chatManager,
-        private readonly ConversationManager $conversationManager
-        ) {}
-
-        public function getConversationData(int $connectedUserId, int $interlocutorId, ?int $conversationId): array
-        {
-        $connectedUser = $this->userManager->getPublicUserById($connectedUserId);
-        $interlocutor = $this->userManager->getPublicUserById($interlocutorId);
-        $chat = $this->initializeChat($connectedUserId, $connectedUser);
-
-        if (empty($chat->getChat()) && $interlocutorId === -1) {
-        return ['chat' => $chat, 'conversation' => null];
-        }
-
-        if (empty($chat->getChat()) && $interlocutorId !== -1) {
-        $conversation = $this->createConversation($connectedUserId, $interlocutorId, $interlocutor);
-        return ['chat' => $chat, 'conversation' => $conversation];
-        }
-
-        $conversation = $this->resolveConversation(
-        $chat,
-        $connectedUserId,
-        $interlocutor,
-        $interlocutorId,
-        $conversationId
-        );
-
-        return ['chat' => $chat, 'conversation' => $conversation];
-        }
-
-        private function initializeChat(int $userId, $connectedUser): Chat
-        {
-        $chat = $this->chatManager->getChat($userId);
-        $chat->setConnectedUser($connectedUser);
-        $this->chatManager->getUnreadMessagesIds($userId, $chat);
-        return $chat;
-        }
-
-        private function createConversation(int $userId, int $interlocutorId, $interlocutor): Conversation
-        {
-        $conversation = new Conversation();
-        $conversation->setInterlocutor($interlocutor);
-
-        if ($this->conversationManager->addConversation($userId, $interlocutorId)) {
-        $conversation->setConversationId($this->conversationManager->getLastConversationId());
-        return $conversation;
-        }
-
-        throw new Exception("Erreur lors de l'initialisation de la conversation.");
-        }
-
-        private function resolveConversation(
-        Chat $chat,
-        int $connectedUserId,
-        ?object $interlocutor,
-        int $interlocutorId,
-        ?int $conversationId
-        ): Conversation {
-        if ($interlocutor !== null) {
-        $conversation = $this->conversationManager->getConversationByUsersId($connectedUserId, $interlocutorId);
-
-        if ($conversation === null) {
-        return $this->createConversation($connectedUserId, $interlocutorId, $interlocutor);
-        }
-
-        $conversation->setInterlocutor($interlocutor);
-        return $conversation;
-        }
-
-        if ($conversationId === null && !empty($chat->getChat())) {
-        $conversationId = $chat->getChat()[0]->getConversationId();
-        }
-
-        $conversation = $this->conversationManager->getConversationById($conversationId, $connectedUserId);
-        $interlocutor = $this->conversationManager->getInterlocutor($connectedUserId, $conversationId);
-        $conversation->setInterlocutor($interlocutor);
-
-        return $conversation;
-        }
+        $this->chatManager = new ChatManager();
+        $this->conversationManager = new ConversationManager();
+        $this->userManager = new UserManager();
     }
+
+    public function prepareChatData(int $connectedUserId, ?string $type, ?int $id, Request $request): array
+    {
+        $connectedUser = $this->userManager->getPublicUserById($connectedUserId);
+        $chat = $this->chatManager->getChat($connectedUserId);
+        $chat->setConnectedUser($connectedUser);
+
+        if ($type === null) {
+            return $this->getDefaultConversationData($chat, $connectedUserId);
+        }
+
+        if ($type === "conversation") {
+            return $this->getConversationData($chat, $connectedUserId, $id);
+        }
+
+        if ($type === "interlocuteur") {
+            return $this->getInterlocutorConversationData($chat, $connectedUserId, $id);
+        }
+
+        return ['chat' => $chat, 'conversation' => null];
+    }
+
+    private function getDefaultConversationData($chat, int $connectedUserId): array
+    {
+        $this->chatManager->getUnreadMessagesIds($connectedUserId, $chat);
+        $firstConv = $chat->getChat()[0] ?? null;
+        if ($firstConv) {
+            $conversation = $this->conversationManager->getConversationById($firstConv->getConversationId(), $connectedUserId);
+            $conversation->setInterlocutor(
+                $this->conversationManager->getInterlocutor($connectedUserId, $firstConv->getConversationId())
+            );
+            return ['chat' => $chat, 'conversation' => $conversation];
+        }
+        return ['chat' => $chat, 'conversation' => null];
+    }
+
+    private function getConversationData($chat, int $connectedUserId, int $conversationId): array
+    {
+        $conversation = $this->conversationManager->getConversationById($conversationId, $connectedUserId);
+        $conversation->setInterlocutor(
+            $this->conversationManager->getInterlocutor($connectedUserId, $conversationId)
+        );
+        return ['chat' => $chat, 'conversation' => $conversation];
+    }
+
+    private function getInterlocutorConversationData($chat, int $connectedUserId, int $interlocutorId): array
+    {
+        $interlocutor = $this->userManager->getPublicUserById($interlocutorId);
+        $conversation = $this->conversationManager->getConversationByUsersIds($connectedUserId, $interlocutorId);
+        if (!$conversation) {
+            $this->conversationManager->addConversation($connectedUserId, $interlocutorId);
+            $conversation = new Conversation();
+            $conversation->setConversationId($this->conversationManager->getLastConversationId());
+        }
+        $conversation->setInterlocutor($interlocutor);
+        return ['chat' => $chat, 'conversation' => $conversation];
+    }
+}

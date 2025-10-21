@@ -72,7 +72,7 @@
                     <?php endforeach;  endif;?>
                     <form action="<?= \App\Utils\Url::to('/chat')?>" method="post">
                         <input type="hidden" name="conversationId" value="<?= $conversation->getConversationId(); ?>" />
-                        <input type="hidden"  name="seenByRecipientMessagesIds" value="<?php json_encode($chat->getUnreadMessagesIds()); ?>" />
+                        <input type="hidden"  name="seenByRecipientMessagesIds" value="<?= json_encode($chat->getUnreadMessagesIds()); ?>" />
                         <div class="chat-message-form">
                             <input class="input-lg message-input" type="text" name="message" placeholder="Tapez votre message ici"/>
                             <input class="btn green-button" type="submit" value="Envoyer" />
