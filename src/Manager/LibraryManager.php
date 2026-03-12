@@ -155,4 +155,30 @@ class LibraryManager extends AbstractEntityManager
         return $result->rowCount() > 0;
     }
 
+    public function addBook(Book $book) : bool
+    {
+        $sql = "INSERT INTO `book` (`title`, `author_id`) VALUES (:title, :authorId)";
+
+        $result = $this->db->query($sql, [
+            'title' => $book->getTitle(),
+            'authorId' => $book->getAuthor()->geAuthorId()
+        ]);
+
+        return $result->rowCount() > 0;
+    }
+
+    public function addBookData(Book $book) : bool
+    {
+        $sql = "INSERT INTO `book_data` (`book_id`, `picture`, `description`, `status`) VALUES (:bookId, :picture, :description, :status)";
+
+        $result = $this->db->query($sql, [
+            'bookId' => $book->getId(),
+            'picture' => $book->getBookPicture(),
+            'description' => $book->getDescription(),
+            'status' => $book->getStatus()
+        ]);
+
+        return $result->rowCount() > 0;
+    }
+
 }

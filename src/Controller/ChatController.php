@@ -31,6 +31,7 @@ class ChatController extends AbstractController
             return;
         }
 
+        /* Si un message est envoyé, on le traite puis on récupère le chat et on renvoie la vue: */
         $messageData = $this->messageService->handleMessagePost($connectedUserId, $this->request);
 
         if (!empty($messageData)) {
@@ -38,6 +39,7 @@ class ChatController extends AbstractController
             return;
         }
 
+        /* Si aucun message n'est envoyé, on récupère le chat et on envoie la vue: */
         $chatData = $this->chatService->prepareChatData($connectedUserId, $type, $id, $this->request);
         $this->render("chat", 'chat', $chatData);
     }

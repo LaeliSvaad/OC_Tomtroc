@@ -1,18 +1,24 @@
 <?php
 namespace App\Controller;
 
+use App\Http\Request;
 use App\Http\Session\SessionStorageInterface;
 use App\Manager\BookManager;
-use App\Utils\Utils;
+use App\Service\BookService;
 use App\View\View;
 
 class BookController extends AbstractController
 {
     private readonly BookManager $bookManager;
+    private BookService $bookService;
+    private Request $request;
 
-    public function __construct(View $view, SessionStorageInterface $session)
+    public function __construct(View $view, SessionStorageInterface $session, Request $request)
     {
         $this->bookManager = new BookManager();
+        $this->bookService = new BookService();
+        $this->request = $request;
+
         parent::__construct($view, $session);
     }
     public function showBook(int $bookId) : void
@@ -27,9 +33,14 @@ class BookController extends AbstractController
         $this->render("Editer " . $book->getTitle(),"book-form", ['book' => $book] );
     }
 
-    public function editBook(int $bookId) : void
+    public function editBook() : void
     {
-        $book = $this->bookManager->getBook($bookId);
-        Utils::Redirect('mon-compte');
+        /* Traitement via le BookService des données envoyées par formulaire et récupération du livre modifié */
+        $book = $this->bookService->handleBookEdition($this->request);
+
+        /* Si l'opération a réussi, on renvoie la vue */
+        if (!empty($book)) {
+            $this->render("Editer " . $book->getTitle(), 'book-form', $book);
+        }
     }
 }

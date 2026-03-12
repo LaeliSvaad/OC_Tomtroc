@@ -5,11 +5,6 @@ namespace App\Utils;
 
 final class Utils
 {
-    public static function request(string $key, mixed $default = null): mixed
-    {
-        return $_REQUEST[$key] ?? $default;
-    }
-
     public static function redirect(string $action, array $params = []) : void
     {
         $url = "/" . $action;
@@ -62,21 +57,4 @@ final class Utils
         return "onclick=\"return confirm('$message');\"";
     }
 
-    public static function controlPassword(string $password) : string
-    {
-        return password_hash($password, PASSWORD_DEFAULT);
-    }
-
-    public static function controlProfilePicture(string $filename) : ?string
-    {
-        if($filename != "")
-            return "pictures/profile/" . htmlspecialchars(strtolower(trim($filename)));
-        else
-            return "pictures/profile/default-profile-picture.png";
-    }
-
-    public static function controlUserInput(string $userInput) : string
-    {
-        return htmlspecialchars($userInput);
-    }
 }

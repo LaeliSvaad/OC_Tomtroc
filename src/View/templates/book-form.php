@@ -1,9 +1,9 @@
 <div class="main-content container-fluid">
-    <a class="back-link" href="index.php?action=user-private-account">&larr; Retour</a>
+    <a class="back-link" href="/mon-compte">&larr; Retour</a>
     <h2 class="playfair-display-title-font">Modifier les informations</h2>
     <div class="row admin-row">
         <div class="col-sm-6">
-            <form action="<?= \App\Utils\Url::to('editer-livre') ?>" method="post" enctype="multipart/form-data" id="uploadForm">
+            <form action="<?= \App\Utils\Url::to('modifier-livre/' . $book->getId()) ?>" method="post" enctype="multipart/form-data" id="uploadForm">
                 <label for="imageUpload">
                     <div class="block-content">
                         <span>Photo</span>
@@ -15,7 +15,7 @@
             </form>
         </div>
         <div class="col-sm-6">
-            <form class="form-horizontal admin-form" method='post' action='<?= \App\Utils\Url::to('editer-livre') ?>'>
+            <form class="form-horizontal admin-form" method='post' action='<?= \App\Utils\Url::to('modifier-livre/' . $book->getId()) ?>'>
                 <div class='form-group'>
                    <label class='control-label' for='input-title' >Titre </label>
                     <input class='form-control input-lg blue-input' type='text' id='input-title' name='title' value='<?= $book->getTitle() ?>'/>
@@ -36,7 +36,7 @@
                 </div>
                 <div class='form-group'>
                     <label class='control-label' for='input-disponibilite' >Disponibilité </label>
-                    <select class='form-control input-lg blue-input' name='disponibilite' id='input-disponibilite'>
+                    <select class='form-control input-lg blue-input' name='status' id='input-disponibilite'>
                         <?php foreach (App\enum\BookStatus::cases() as $status) : ?>
                         <option value="<?= $status->value ?>"><?= $status->getLabel() ?></option>
                         <?php endforeach; ?>

@@ -6,7 +6,6 @@ use App\Manager\ConversationManager;
 use App\Manager\UserManager;
 use App\Http\Request;
 use App\Model\Conversation;
-use App\Manager\MessageManager;
 
 class ChatService
 {

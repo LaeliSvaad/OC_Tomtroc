@@ -20,5 +20,6 @@ return[
     ["/mon-compte", UserController::class, "showPrivateUserPage"],
     ["/editer-utilisateur", UserController::class, "modifyUser"],
     ["/utilisateur/{userId:\d+}", UserController::class, "showPublicUserPage"],
-    ["/editer-livre/{bookId:\d+}", BookController::class, "editBook"],
+    ["/editer-livre/{bookId:\d+}", BookController::class, "editBookForm"],
+    ["/modifier-livre/{bookId:\d+}", BookController::class, "editBook"],
 ];

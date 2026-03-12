@@ -9,6 +9,7 @@ use App\Model\Chat;
 use App\Http\Session\SessionStorageInterface;
 use App\Http\Request;
 use App\Utils\Utils;
+use App\Utils\UserInput;
 use App\View\View;
 
 class UserController extends AbstractController
@@ -18,8 +19,9 @@ class UserController extends AbstractController
     public function __construct(View $view, SessionStorageInterface $session, Request $request)
     {
         $this->request = $request;
-        parent::__construct($view, $session);
         $this->userManager= new UserManager();
+
+        parent::__construct($view, $session);
 
     }
 
@@ -55,14 +57,14 @@ class UserController extends AbstractController
     }
 
     public function signUp(){
-        $params["nickname"] = Utils::controlUserInput(Utils::request("nickname"));
-        $params["email"] = Utils::controlUserInput(Utils::request("email"));
-        $params["password"] = Utils::controlPassword(Utils::request("password"));
+        $params["nickname"] = UserInput::controlUserInput($this->request->post("nickname"));
+        $params["email"] = UserInput::controlUserInput($this->request->post("email"));
+        $params["password"] = UserInput::controlPassword($this->request->post("password"));
         $user = new User($params);
         $userManager = new UserManager();
         if($userManager->checkExistingEmail($params["email"]))
         {
-            throw new Exception("Un compte existe déjà avec cette adresse mail.");
+            throw new \Exception("Un compte existe déjà avec cette adresse mail.");
         }
         else{
             $success = $userManager->addUser($user);
@@ -147,15 +149,15 @@ class UserController extends AbstractController
     {
         if(isset($_FILES["picture"]))
             $userRequest["picture"] = $_FILES["picture"];
-        $userRequest["nickname"] = Utils::request("nickname");
-        $userRequest["email"] = Utils::request("email");
-        $userRequest["password"] = Utils::request("password");
-        $userRequest["userId"]= Utils::request("userId");
+        $userRequest["nickname"] = $this->request->post("nickname");
+        $userRequest["email"] = $this->request->post("email");
+        $userRequest["password"] = $this->request->post("password");
+        $userRequest["userId"]= $this->request->post("userId");
 
         if(!isset($userRequest["userId"]) || $userRequest["userId"] == 0)
-            throw new Exception("Une erreur est survenue lors de la mise à jour de vos informations. 0");
+            throw new \Exception("Une erreur est survenue lors de la mise à jour de vos informations. 0");
         else{
-            $userRequest["userId"] = (int)Utils::controlUserInput(Utils::request("userId"));
+            $userRequest["userId"] = (int)UserInput::controlUserInput($this->request->post("userId"));
             $userManager = new UserManager();
             $user = $userManager->getPrivateUserById($userRequest["userId"]);
         }
@@ -166,11 +168,11 @@ class UserController extends AbstractController
                 case 'nickname':
                     if($userRequest["nickname"] != null)
                     {
-                        $userRequest["nickname"] = Utils::controlUserInput($userRequest["nickname"]);
+                        $userRequest["nickname"] = UserInput::controlUserInput($userRequest["nickname"]);
                         if($userRequest["nickname"] != $user->getNickname()){
                             $modif = $userManager->modifyUserNickname($userRequest["nickname"], $userRequest["userId"]);
                             if($modif == 0)
-                                throw new Exception("Une erreur est survenue lors de la mise à jour de vos informations. 1");
+                                throw new \Exception("Une erreur est survenue lors de la mise à jour de vos informations. 1");
                         }
                     }
                     continue 2;
@@ -178,11 +180,11 @@ class UserController extends AbstractController
                 case 'email':
                     if($userRequest["email"] != null && $userRequest["email"] != $user->getEmail())
                     {
-                        $userRequest["email"] = Utils::controlUserInput($userRequest["email"]);
+                        $userRequest["email"] = UserInput::controlUserInput($userRequest["email"]);
                         if($userRequest["email"] != $user->getEmail()){
                             $modif = $userManager->modifyUserEmail($userRequest["email"], $userRequest["userId"]);
                             if($modif == 0)
-                                throw new Exception("Une erreur est survenue lors de la mise à jour de vos informations. 2");
+                                throw new \Exception("Une erreur est survenue lors de la mise à jour de vos informations. 2");
                         }
                     }
                     continue 2;
@@ -190,11 +192,11 @@ class UserController extends AbstractController
                 case 'password':
                     if($userRequest["password"] != null)
                     {
-                        $userRequest["password"] = Utils::controlPassword($userRequest["password"]);
+                        $userRequest["password"] = UserInput::controlPassword($userRequest["password"]);
                         if($userRequest["password"] != $user->getPassword()){
                             $modif = $userManager->modifyUserPassword($userRequest["password"], $userRequest["userId"]);
                             if($modif == 0)
-                                throw new Exception("Une erreur est survenue lors de la mise à jour de vos informations. 3");
+                                throw new \Exception("Une erreur est survenue lors de la mise à jour de vos informations. 3");
                         }
                     }
                     continue 2;
@@ -202,20 +204,20 @@ class UserController extends AbstractController
                 case 'picture':
                     if($userRequest["picture"] != null)
                     {
-                        $userRequest["picture"]["name"] = Utils::controlProfilePicture($userRequest["picture"]["name"]);
+                        $userRequest["picture"]["name"] = UserInput::controlProfilePicture($userRequest["picture"]["name"]);
 
                         if(move_uploaded_file($userRequest["picture"]["tmp_name"], $userRequest["picture"]["name"]) === false){
-                            throw new Exception("Une erreur est survenue lors de la mise à jour de vos informations. 4");
+                            throw new \Exception("Une erreur est survenue lors de la mise à jour de vos informations. 4");
                         }
                         else{
                             $modif = $userManager->modifyUserPicture($userRequest["picture"]["name"], $userRequest["userId"]);
                                 if($modif == 0)
-                                    throw new Exception("Une erreur est survenue lors de la mise à jour de vos informations. 5");
+                                    throw new \Exception("Une erreur est survenue lors de la mise à jour de vos informations. 5");
                             }
                     }
                     break;
             }
         }
-        Utils::redirect('user-private-account');
+        Utils::redirect('mon-compte');
     }
 }
