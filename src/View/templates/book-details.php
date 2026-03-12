@@ -19,7 +19,7 @@ $userId = $user->getUserId();
             <div class="col-xs-12 col-sm-6">
                 <div class="inner-col">
                     <h2 class="playfair-display-title-font"><?= $bookTitle ?></h2>
-                    <span>par <strong><?= $author->getFirstname() ?> <?= $author->getLastname() ?></strong></span>
+                    <span>par <strong><?= $author->getName() ?> </strong></span>
                     <span>Description</span>
                     <p><?= $bookDescription ?></p>
                     <span>Propriétaire</span>

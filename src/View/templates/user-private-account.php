@@ -62,7 +62,7 @@
                 <tr>
                     <td><div class="cell-fixed"><img class='table-book-img' src='<?= $book->getBookPicture() ?>' alt='<?= $book->getTitle()?>'></div></td>
                     <td><div class="cell-fixed"><?= $book->getTitle() ?></div></td>
-                    <td><div class="cell-fixed"><?= $author->getFirstname() . " " . $author->getLastname() ?></div></td>
+                    <td><div class="cell-fixed"><?= $author->getName() ?></div></td>
                     <td><div class="italic cell-fixed"><?= $book->getDescription()?></div></td>
                     <td><div class="book-status cell-fixed"><span class="<?= $status->value ?>"></span></div></td>
                     <td><div class="book-action-links cell-fixed">

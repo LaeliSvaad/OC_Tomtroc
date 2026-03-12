@@ -36,7 +36,7 @@
                             <tr>
                                 <td><div class="cell-fixed"><img class='table-book-img' src='<?= \App\Utils\Url::to($book->getBookPicture()) ?>' alt='<?= $book->getTitle()?>'></div></td>
                                 <td><div class="cell-fixed"><?= $book->getTitle() ?></div></td>
-                                <td><div class="cell-fixed"><?= $author->getFirstname() . " " . $author->getLastname() ?></div></td>
+                                <td><div class="cell-fixed"><?= $author->getName() ?></div></td>
                                 <td><div class="italic cell-fixed"><?= $book->getDescription()?></div></td>
                             </tr>
                         <?php endforeach;  ?>

@@ -22,8 +22,7 @@ class LibraryManager extends AbstractEntityManager
                     `book`.title,
                     `book_data`.id,
                     `book_data`.picture AS bookPicture, 
-                    `author`.firstname, 
-                    `author`.lastname
+                    `author`.name
                 FROM `library`
                 INNER JOIN `user` ON `user`.`id` = `library`.`user_id`
                 INNER JOIN `book_data` ON `library`.`book_data_id` = `book_data`.`id`
@@ -54,9 +53,7 @@ class LibraryManager extends AbstractEntityManager
                 `book_data`.description, 
                 `book_data`.picture AS bookPicture, 
                 `book_data`.id,
-                `author`.firstname, 
-                `author`.lastname, 
-                `author`.pseudo
+                `author`.name
             FROM `library`
             INNER JOIN `user` ON `user`.`id` = `library`.`user_id`
             INNER JOIN `book_data` ON `library`.`book_data_id` = `book_data`.`id`
@@ -87,9 +84,7 @@ class LibraryManager extends AbstractEntityManager
                     `book_data`.description, 
                     `book_data`.picture AS bookPicture, 
                     `book_data`.id,
-                    `author`.firstname, 
-                    `author`.lastname, 
-                    `author`.pseudo
+                    `author`.name
                 FROM `library`
                 INNER JOIN `user` ON `user`.`id` = `library`.`user_id`
                 INNER JOIN `book_data` ON `library`.`book_data_id` = `book_data`.`id`
@@ -118,9 +113,7 @@ class LibraryManager extends AbstractEntityManager
                     `book_data`.picture AS bookPicture, 
                     `book_data`.status,
                     `book_data`.id,
-                    `author`.firstname, 
-                    `author`.lastname, 
-                    `author`.pseudo
+                    `author`.name
                 FROM `library`
                 INNER JOIN `book_data` ON `library`.`book_data_id` = `book_data`.`id`
                 INNER JOIN `book` ON `book_data`.`book_id` = `book`.`id`
@@ -161,7 +154,7 @@ class LibraryManager extends AbstractEntityManager
 
         $result = $this->db->query($sql, [
             'title' => $book->getTitle(),
-            'authorId' => $book->getAuthor()->geAuthorId()
+            'authorId' => $book->getAuthor()->getAuthorId()
         ]);
 
         return $result->rowCount() > 0;

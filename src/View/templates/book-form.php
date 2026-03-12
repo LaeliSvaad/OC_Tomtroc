@@ -11,6 +11,7 @@
                         <span class="input-file-span">Modifier la photo</span>
                     </div>
                 </label>
+                <input type='hidden' name='bookId' value='<?= $book->getId() ?>'/>
                 <input type="file" name="picture" id="imageUpload" onchange="document.getElementById('uploadForm').submit();">
             </form>
         </div>
@@ -23,12 +24,7 @@
                 </div>
                 <div class='form-group'>
                     <label class='control-label' for='input-author' >Auteur </label>
-                    <input class='form-control input-lg blue-input' type='text' id='input-author' name='author' value='<?= $book->getAuthor()->getFirstname() . " " . $book->getAuthor()->getLastname() ?>'/>
-                </div>
-                <div class='form-group'>
-                    <label class='control-label' for='input-authorPseudo' >Pseudo de l'auteur: </label>
-                    <input class='form-control input-lg blue-input' type='text' id='input-authorPseudo' name='authorPseudo' value='<?= $book->getAuthor()->getPseudo() ?>'/>
-                    <input type='hidden' name='authorId' value='<?= $book->getAuthor()->getAuthorId() ?>'/>
+                    <input class='form-control input-lg blue-input' type='text' id='input-author' name='authorName' value='<?= $book->getAuthor()->getName() ?>'/>
                 </div>
                 <div class='form-group'>
                     <label class='control-label' for='input-description' >Commentaire </label>
@@ -38,7 +34,10 @@
                     <label class='control-label' for='input-disponibilite' >Disponibilité </label>
                     <select class='form-control input-lg blue-input' name='status' id='input-disponibilite'>
                         <?php foreach (App\enum\BookStatus::cases() as $status) : ?>
-                        <option value="<?= $status->value ?>"><?= $status->getLabel() ?></option>
+                            <option value="<?= $status->value ?>"
+                                <?= $book->getStatus()->value == $status->value ? 'selected' : '' ?>>
+                                <?= $status->getLabel() ?>
+                            </option>
                         <?php endforeach; ?>
                     </select>
                 </div>

@@ -33,7 +33,7 @@
                     </div>
                     <div class="book-info">
                         <h3><?= $book->getTitle() ?></h3>
-                        <span><?= $author->getFirstname() . ' ' . $author->getLastname() ?></span>
+                        <span><?= $author->getName() ?></span>
                         <span class="italic"><?= $isOwner ? 'Vendu par vous.' : 'Vendu par : ' . $user->getNickname() ?></span>
                     </div>
                 </a>

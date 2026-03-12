@@ -6,6 +6,7 @@ use App\Http\Session\SessionStorageInterface;
 use App\Manager\BookManager;
 use App\Service\BookService;
 use App\View\View;
+use App\Utils\Utils;
 
 class BookController extends AbstractController
 {
@@ -36,11 +37,13 @@ class BookController extends AbstractController
     public function editBook() : void
     {
         /* Traitement via le BookService des données envoyées par formulaire et récupération du livre modifié */
-        $book = $this->bookService->handleBookEdition($this->request);
+        $this->bookService->handleBookEdition($this->request);
 
-        /* Si l'opération a réussi, on renvoie la vue */
+        /*Retour sur la page mon compte*/
+        Utils::redirect('mon-compte');
+        /* Si l'opération a réussi, on retourne sur la page mon compte
         if (!empty($book)) {
-            $this->render("Editer " . $book->getTitle(), 'book-form', $book);
-        }
+            $this->render("Editer " . $book->getTitle(), 'book-form', ['book' => $book]);
+        }*/
     }
 }

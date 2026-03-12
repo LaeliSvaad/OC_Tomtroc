@@ -6,38 +6,17 @@
 namespace App\Model;
 class Author extends AbstractEntity
 {
-    private string $firstname;
-    private string $lastname;
-    private ?string $pseudo;
+    private string $name;
     private int $authorId;
 
-    public function setFirstname(string $firstname) : void
+    public function setName(string $name) : void
     {
-        $this->firstname = $firstname;
+        $this->name = $name;
     }
 
-    public function setLastname(string $lastname) : void
+    public function getName() : string
     {
-        $this->lastname = $lastname;
-    }
-    public function setPseudo(?string $pseudo) : void
-    {
-        $this->pseudo = $pseudo;
-    }
-
-    public function getFirstname() : string
-    {
-        return $this->firstname;
-    }
-
-    public function getLastname() : string
-    {
-        return $this->lastname;
-    }
-
-    public function getPseudo() : ?string
-    {
-        return $this->pseudo;
+        return $this->name;
     }
 
     public function getAuthorId() : int

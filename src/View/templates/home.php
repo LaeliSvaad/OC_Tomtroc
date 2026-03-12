@@ -34,7 +34,7 @@
                             </div>
                             <div class='book-info'>
                                 <h3><?= $book->getTitle() ?></h3>
-                                <span><?= $book->getAuthor()->getFirstname() . " " . $book->getAuthor()->getLastname()?></span>
+                                <span><?= $book->getAuthor()->getName() ?></span>
                                 <span class='italic'>Vendu par:<?= $book->getUser()->getNickname() ?></span>
                             </div>
                         </a>

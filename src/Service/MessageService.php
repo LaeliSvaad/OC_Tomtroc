@@ -16,12 +16,15 @@ class MessageService
     private ConversationManager $conversationManager;
     private UserManager $userManager;
 
+    private Request $request;
+
     public function __construct()
     {
         $this->messageManager = new MessageManager();
         $this->chatManager = new ChatManager();
         $this->conversationManager = new ConversationManager();
         $this->userManager = new UserManager();
+        $this->request = new Request();
     }
 
     /**

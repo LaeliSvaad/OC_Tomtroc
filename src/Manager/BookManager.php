@@ -8,6 +8,7 @@ namespace App\Manager;
 use App\Model\Author;
 use App\Model\Book;
 use App\Model\User;
+use App\Enum\BookStatus;
 
 class BookManager extends AbstractEntityManager
 {
@@ -15,8 +16,8 @@ class BookManager extends AbstractEntityManager
     public function getBook(int $id) : ?Book
     {
         $sql = "SELECT book.`title`,
-                book_data.`description`, book_data.`picture` AS bookPicture, book_data.`id`,
-                author.`firstname`, author.lastname, author.pseudo, author.id AS authorId, 
+                book_data.`description`, book_data.`status`, book_data.`picture` AS bookPicture, book_data.`id`,
+                author.`name`, author.id AS authorId, 
                 user.`nickname`, user.`picture`, user.`email`, user.`id` AS userId
                 FROM book 
                 INNER JOIN book_data ON book.`id` = book_data.book_id 
@@ -37,14 +38,65 @@ class BookManager extends AbstractEntityManager
         return null;
     }
 
-    public function modifyBook(Book $book) : ?int
+    public function modifyBookTitle(string $title, int $id) : ?int
     {
-        $sql = "UPDATE `book` SET `title` = :title, `description` = :description, `picture` = :picture WHERE `id` = :id";
+        $sql = "UPDATE `book` 
+                JOIN `book_data` ON `book`.`id` = `book_data`.`book_id`
+                SET `book`.`title` = :title
+                WHERE `book_data`.`id` = :id";
         $result = $this->db->query($sql, [
-            'title' => $book->getTitle(),
-            'description' => $book->getDescription(),
-            'picture' => $book->getPicture(),
-            'id' => $book->getId()
+            'title' => $title,
+            'id' => $id
+        ]);
+        return $result->rowCount() > 0;
+    }
+
+    public function modifyBookAuthorName(string $name, int $id) : ?int
+    {
+        $sql = "UPDATE `author` 
+                JOIN `book` ON `author`.`id` = `book`.`author_id`
+                JOIN `book_data` ON `book`.`id` = `book_data`.`book_id`
+                SET `author`.`name` = :name
+                WHERE `book_data`.`id` = :id";
+        $result = $this->db->query($sql, [
+            'name' => $name,
+            'id' => $id
+        ]);
+        return $result->rowCount() > 0;
+    }
+
+    public function modifyBookDescription(string $description, int $id) : ?int
+    {
+        $sql = "UPDATE `book_data` 
+                SET `book_data`.`description` = :description
+                WHERE `book_data`.`id` = :id";
+        $result = $this->db->query($sql, [
+            'description' => $description,
+            'id' => $id
+        ]);
+        return $result->rowCount() > 0;
+    }
+
+    public function modifyBookStatus(string $status, int $id) : ?int
+    {
+        $sql = "UPDATE `book_data` 
+                SET `book_data`.`status` = :status
+                WHERE `book_data`.`id` = :id";
+        $result = $this->db->query($sql, [
+            'status' => $status,
+            'id' => $id
+        ]);
+        return $result->rowCount() > 0;
+    }
+
+    public function modifyBookPicture(string $picture, int $id) : ?int
+    {
+        $sql = "UPDATE `book_data` 
+                SET `book_data`.`picture` = :picture
+                WHERE `book_data`.`id` = :id";
+        $result = $this->db->query($sql, [
+            'picture' => $picture,
+            'id' => $id
         ]);
         return $result->rowCount() > 0;
     }
