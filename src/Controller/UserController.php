@@ -147,8 +147,7 @@ class UserController extends AbstractController
 
     public function modifyUser(): void
     {
-        if(isset($_FILES["picture"]))
-            $userRequest["picture"] = $_FILES["picture"];
+        $userRequest["picture"] = $this->request->file("picture");
         $userRequest["nickname"] = $this->request->post("nickname");
         $userRequest["email"] = $this->request->post("email");
         $userRequest["password"] = $this->request->post("password");
