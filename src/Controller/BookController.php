@@ -53,7 +53,7 @@ class BookController extends AbstractController
         $this->bookService->handleBookSuppression($bookId);
 
         /* Retour sur la page mon compte une fois la suppression faite */
-        //Utils::redirect('mon-compte');
+        Utils::redirect('mon-compte');
     }
 
 

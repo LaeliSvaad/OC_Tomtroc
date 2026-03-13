@@ -5,6 +5,7 @@ use App\Manager\UserManager;
 use App\Manager\ChatManager;
 use App\Manager\ConversationManager;
 use App\Manager\LibraryManager;
+use App\Service\UserService;
 use App\Model\Chat;
 use App\Http\Session\SessionStorageInterface;
 use App\Http\Request;
@@ -16,10 +17,12 @@ class UserController extends AbstractController
 {
     private readonly UserManager $userManager;
     private Request $request;
+    private UserService $userService;
     public function __construct(View $view, SessionStorageInterface $session, Request $request)
     {
+        $this->userManager = new userManager();
+        $this->userService = new UserService();
         $this->request = $request;
-        $this->userManager= new UserManager();
 
         parent::__construct($view, $session);
 
@@ -27,56 +30,27 @@ class UserController extends AbstractController
 
     public function logIn(): void
     {
-        if($this->request->isPost())
-        {
-            $nickname = $this->request->post('nickname', '');
-            $email = $this->request->post('email', '');
-            $password = $this->request->post('password', '');
+        /* Traitement via le UserService des données envoyées par l'utilisateur via le formulaire */
+        $connected = $this->userService->handleLogIn($this->request, $this->session);
 
-            $user = $this->userManager->getUserByLoginInfo($nickname, $email);
-
-            if(!is_null($user))
-            {
-                if (!password_verify($password, $user->getPassword())) {
-                    throw new \Exception("Une erreur est survenue lors de l'authentification.");
-                }
-
-                $this->session->set('userId', $user->getUserId());
-                $this->session->regenerate();
-                Utils::redirect("mon-compte");
-            }
-            else
-            {
-                $this->render("Connexion", "log-in");
-            }
-        }
+        /* Redirection vers la page mon compte une fois la connexion établie, vers le formulaire de connexion si une erreur est survenue */
+        if($connected === false)
+            $this->view->render("Connexion", "log-in");
         else
-        {
-            $this->render("Connexion", "log-in");
-        }
+            Utils::redirect('mon-compte');
+
     }
 
-    public function signUp(){
-        $params["nickname"] = UserInput::controlUserInput($this->request->post("nickname"));
-        $params["email"] = UserInput::controlUserInput($this->request->post("email"));
-        $params["password"] = UserInput::controlPassword($this->request->post("password"));
-        $user = new User($params);
-        $userManager = new UserManager();
-        if($userManager->checkExistingEmail($params["email"]))
-        {
-            throw new \Exception("Un compte existe déjà avec cette adresse mail.");
-        }
-        else{
-            $success = $userManager->addUser($user);
-        }
-        if($success){
-            $view = new View('sign-in');
-            $view->render("sign-in");
-        }
-        else{
-            $view = new View('sign-up');
-            $view->render("sign-up");
-        }
+    public function signUp()
+    {
+        /* Traitement via le UserService des données envoyées par l'utilisateur via le formulaire */
+        $registered = $this->userService->handleSignUp($this->request);
+
+        /* Redirection vers le formulaire de connexion une fois l'inscription faite, retour au formulaire d'enregistrement si une erreur est survenue */
+        if($registered === false)
+            $this->view->render("Inscription", "sign-up");
+        else
+            $this->view->render("Connexion", "log-in");
     }
 
     public function logOut(){

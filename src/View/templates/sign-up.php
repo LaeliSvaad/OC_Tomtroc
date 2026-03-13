@@ -20,7 +20,7 @@
                        <input class="btn green-button" type="submit" value="S'inscrire">
                    </div>
                </form>
-               <span class="link-span">Déjà inscrit? <a href="<?= \App\Utils\Url::to('formulaire-connexion') ?>" >Connectez-vous</a></span>
+               <span class="link-span">Déjà inscrit? <a href="<?= \App\Utils\Url::to('connexion') ?>" >Connectez-vous</a></span>
            </div>
         </div>
         <div class="col-xs-12 col-sm-6 background-img-col">
