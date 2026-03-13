@@ -5,6 +5,7 @@ namespace App\Utils;
 
 final class Utils
 {
+    /* Classe utilitaire regroupant des méthodes générales */
     public static function redirect(string $action, array $params = []) : void
     {
         $url = "/" . $action;

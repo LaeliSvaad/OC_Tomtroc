@@ -5,6 +5,7 @@ namespace App\Utils;
 
 final class Dates
 {
+    /* Classe utilitaire regroupant diverses méthodes permettant d'effectuer des opérations sur les dates */
     public static function dateInterval(\DateTime $registrationDate) :string
     {
         $now = new \DateTime();

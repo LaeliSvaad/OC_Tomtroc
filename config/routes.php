@@ -22,4 +22,5 @@ return[
     ["/utilisateur/{userId:\d+}", UserController::class, "showPublicUserPage"],
     ["/editer-livre/{bookId:\d+}", BookController::class, "editBookForm"],
     ["/modifier-livre/{bookId:\d+}", BookController::class, "editBook"],
+    ["/supprimer-livre/{bookId:\d+}", BookController::class, "deleteBook"],
 ];

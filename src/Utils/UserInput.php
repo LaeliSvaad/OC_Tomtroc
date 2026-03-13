@@ -5,6 +5,7 @@ namespace App\Utils;
 
 final class UserInput
 {
+    /* Classe utilitaire regroupant diverses méthodes permettant d'effectuer le contrôle des données envoyées par l'utilisateur */
     public static function controlPassword(string $password) : string
     {
         return password_hash($password, PASSWORD_DEFAULT);

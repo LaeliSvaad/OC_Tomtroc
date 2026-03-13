@@ -8,11 +8,10 @@ namespace App\Manager;
 use App\Model\Author;
 use App\Model\Book;
 use App\Model\User;
-use App\Enum\BookStatus;
 
 class BookManager extends AbstractEntityManager
 {
-
+    /* Récupère l'ensemble des détails d'un seul livre */
     public function getBook(int $id) : ?Book
     {
         $sql = "SELECT book.`title`,
@@ -38,6 +37,7 @@ class BookManager extends AbstractEntityManager
         return null;
     }
 
+    /* Edition du titre d'un livre */
     public function modifyBookTitle(string $title, int $id) : ?int
     {
         $sql = "UPDATE `book` 
@@ -51,6 +51,7 @@ class BookManager extends AbstractEntityManager
         return $result->rowCount() > 0;
     }
 
+    /* Edition du nom de l'auteur d'un livre */
     public function modifyBookAuthorName(string $name, int $id) : ?int
     {
         $sql = "UPDATE `author` 
@@ -65,6 +66,7 @@ class BookManager extends AbstractEntityManager
         return $result->rowCount() > 0;
     }
 
+    /* Edition de la description d'un livre */
     public function modifyBookDescription(string $description, int $id) : ?int
     {
         $sql = "UPDATE `book_data` 
@@ -77,6 +79,7 @@ class BookManager extends AbstractEntityManager
         return $result->rowCount() > 0;
     }
 
+    /* Edition du statut de disponibilité d'un livre */
     public function modifyBookStatus(string $status, int $id) : ?int
     {
         $sql = "UPDATE `book_data` 
@@ -89,6 +92,7 @@ class BookManager extends AbstractEntityManager
         return $result->rowCount() > 0;
     }
 
+    /* Mise à jour de l'url de l'image d'un livre */
     public function modifyBookPicture(string $picture, int $id) : ?int
     {
         $sql = "UPDATE `book_data` 
