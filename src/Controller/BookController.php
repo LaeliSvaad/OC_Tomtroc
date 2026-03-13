@@ -41,9 +41,5 @@ class BookController extends AbstractController
 
         /*Retour sur la page mon compte*/
         Utils::redirect('mon-compte');
-        /* Si l'opération a réussi, on retourne sur la page mon compte
-        if (!empty($book)) {
-            $this->render("Editer " . $book->getTitle(), 'book-form', ['book' => $book]);
-        }*/
     }
 }

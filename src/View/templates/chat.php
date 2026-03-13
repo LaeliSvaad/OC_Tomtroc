@@ -25,7 +25,7 @@
                             <?php endif; ?>
                                 <div class="message-overview-info">
                                     <span><?= $conv->getInterlocutor()->getNickname() ?></span>
-                                    <span><?= \App\Utils\Utils::convertDateToSmallFormat($conv->getConversation()[0]->getDatetime()) ?></span>
+                                    <span><?= \App\Utils\Dates::convertDateToSmallFormat($conv->getConversation()[0]->getDatetime()) ?></span>
                                 </div>
                                 <div class="message-overview"><?= $conv->getConversation()[0]->getText()?></div>
                             </div>
@@ -51,7 +51,7 @@
                             <div class="message-header">
                                 <img class="profile-picture mini-profile-picture" src="<?= \App\Utils\Url::to($message->getSender()->getPicture()) ?>" alt="<?= $message->getSender()->getNickname() ?> profile picture">
                         <?php endif;?>
-                                <?= \App\Utils\Utils::convertDateToMediumFormat($message->getDatetime()) ?>
+                                <?= \App\Utils\Dates::convertDateToMediumFormat($message->getDatetime()) ?>
                             </div>
                         <?php if($message->isConnectedUserMessage() === true):?>
                             <div class="message connected-user-message">

@@ -13,7 +13,7 @@
                 </div>
                 <div class="content-block">
                     <h3 class="playfair-display-title-font"><?= $user->getNickname() ?></h3>
-                    <div><span class="grey-text">Membre depuis <?= \App\Utils\Utils::dateInterval($user->getRegistrationDate()) ?></span></div>
+                    <div><span class="grey-text">Membre depuis <?= \App\Utils\Dates::dateInterval($user->getRegistrationDate()) ?></span></div>
                     <div><span class="uppercase-text">Bibliothèque</span></div>
                     <div><img src="<?= \App\Utils\Url::to('assets/images/library-icon.png') ?>" alt="library icon">&nbsp;<span><?= $user->getLibrary()->countBooks() ?> livres</span></div>
                     <?php if (!is_null($this->session->get('userId'))): ?>

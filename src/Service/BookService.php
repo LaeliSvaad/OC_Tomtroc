@@ -3,7 +3,6 @@ namespace App\Service;
 
 use App\Http\Request;
 use App\Manager\BookManager;
-use App\Model\Book;
 use App\Utils\UserInput;
 use App\Enum\BookStatus;
 
@@ -23,7 +22,7 @@ class BookService
      *
      * @param Request $request
      * @return void
-     * @throws Exception
+     * @throws \Exception
      */
     public function handleBookEdition(Request $request) : void
     {
@@ -111,6 +110,5 @@ class BookService
                     break;
             }
         }
-        //return $this->bookManager->getBook($bookRequest["id"]);
     }
 }

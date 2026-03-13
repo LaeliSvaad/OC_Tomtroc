@@ -30,4 +30,10 @@ final class UserInput
     {
         return htmlspecialchars($userInput);
     }
+
+    public static function askConfirmation(string $message) : string
+    {
+        return "onclick=\"return confirm('$message');\"";
+    }
+
 }
