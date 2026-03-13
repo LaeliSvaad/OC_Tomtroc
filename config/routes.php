@@ -12,6 +12,7 @@ return[
     ["/", HomeController::class, "showHomepage"],
     ["/nos-livres", LibraryController::class, "showLibrary"],
     ["/nos-livres/{bookId:\d+}", BookController::class, "showBook"],
+    ["/recherche-livres", LibraryController::class, "showSearchResults"],
     ["/chat", ChatController::class, "showChat"],
     ["/chat/{type}-{id:\d+}", ChatController::class, "showChat"],
     ["/formulaire-inscription", UserController::class, "signUp"],
@@ -23,5 +24,5 @@ return[
     ["/utilisateur/{userId:\d+}", UserController::class, "showPublicUserPage"],
     ["/formulaire-livre/{bookId:\d+}", BookController::class, "editBookForm"],
     ["/modifier-livre/{bookId:\d+}", BookController::class, "editBook"],
-    ["/supprimer-livre/{bookId:\d+}", BookController::class, "deleteBook"],
+    ["/supprimer-livre/{bookId:\d+}", LibraryController::class, "deleteBook"],
 ];

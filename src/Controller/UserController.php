@@ -31,7 +31,7 @@ class UserController extends AbstractController
     public function logIn(): void
     {
         /* Traitement via le UserService des données envoyées par l'utilisateur via le formulaire */
-        $connected = $this->userService->handleLogIn($this->request, $this->session);
+        $connected = $this->userService->handleLogIn($this->session);
 
         /* Redirection vers la page mon compte une fois la connexion établie, vers le formulaire de connexion si une erreur est survenue */
         if($connected === false)
@@ -44,7 +44,7 @@ class UserController extends AbstractController
     public function signUp()
     {
         /* Traitement via le UserService des données envoyées par l'utilisateur via le formulaire */
-        $registered = $this->userService->handleSignUp($this->request);
+        $registered = $this->userService->handleSignUp();
 
         /* Redirection vers le formulaire de connexion une fois l'inscription faite, retour au formulaire d'enregistrement si une erreur est survenue */
         if($registered === false)

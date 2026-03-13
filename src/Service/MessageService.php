@@ -15,7 +15,6 @@ class MessageService
     private ChatManager $chatManager;
     private ConversationManager $conversationManager;
     private UserManager $userManager;
-
     private Request $request;
 
     public function __construct()

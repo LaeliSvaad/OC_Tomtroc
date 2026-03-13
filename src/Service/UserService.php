@@ -20,7 +20,7 @@ class UserService
         $this->user = new User();
     }
 
-    public function handleLogIn(Request $request, SessionStorageInterface $session) : bool
+    public function handleLogIn(SessionStorageInterface $session) : bool
     {
         if($this->request->isPost())
         {

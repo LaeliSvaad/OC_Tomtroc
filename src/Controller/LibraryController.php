@@ -3,15 +3,18 @@ namespace App\Controller;
 
 use App\Http\Session\SessionStorageInterface;
 use App\Manager\LibraryManager;
+use App\Service\LibraryService;
 use App\View\View;
 
 class LibraryController extends AbstractController
 {
     private readonly LibraryManager $libraryManager;
+    private LibraryService $libraryService;
 
     public function __construct(View $view, SessionStorageInterface $session)
     {
         $this->libraryManager = new LibraryManager();
+        $this->libraryService = new LibraryService();
         parent::__construct($view, $session);
     }
     public function showLibrary() : void
@@ -22,23 +25,16 @@ class LibraryController extends AbstractController
 
     public function showSearchResults() : void
     {
-        $booksearch = Utils::request("booksearch", NULL);
-        $booksearch = Utils::controlUserInput($booksearch);
-
-        $library = $this->libraryManager>getBooksByTitle($booksearch);
-
+        $library = $this->libraryService->handleBookResearch();
         $this->render("nos-livres", 'our-books', ['library' => $library->getLibrary()] );
 
     }
 
-    public function deleteBook() : void
+    public function deleteBook(int $bookId) : void
     {
-        $id = Utils::request('id', '-1');
-
-        if($this->libraryManager->deleteBook($id) > 0)
-            Utils::redirect("user-private-account");
-        else
-            throw new \Exception("Une erreur est survenue lors de la suppression du livre.");
-
+        /* Traitement via le BookService de la suppression du livre */
+        $this->libraryService->handleBookSuppression($bookId);
+        /* Retour sur la page mon compte une fois la suppression faite */
+        Utils::redirect('mon-compte');
     }
 }

@@ -47,14 +47,4 @@ class BookController extends AbstractController
         Utils::redirect('mon-compte');
     }
 
-    public function deleteBook(int $bookId) : void
-    {
-        /* Traitement via le BookService de la suppression du livre */
-        $this->bookService->handleBookSuppression($bookId);
-
-        /* Retour sur la page mon compte une fois la suppression faite */
-        Utils::redirect('mon-compte');
-    }
-
-
 }
