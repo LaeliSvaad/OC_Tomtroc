@@ -2,18 +2,22 @@
 namespace App\Service;
 
 use App\Manager\LibraryManager;
+use App\Manager\BookManager;
 use App\Model\Library;
 use App\Http\Request;
+use App\Utils\Url;
 use App\Utils\UserInput;
 
 class LibraryService
 {
     private LibraryManager $libraryManager;
+    private BookManager $bookManager;
     private Request $request;
 
     public function __construct()
     {
         $this->libraryManager = new LibraryManager();
+        $this->bookManager = new BookManager();
         $this->request = new Request();
     }
 
@@ -32,9 +36,13 @@ class LibraryService
         else
         {
             $bookId = (int)UserInput::controlUserInput($bookId);
+            $bookPicture = $this->bookManager->getBookPicture($bookId);;
+            if($bookPicture != 'assets/images/books/default-book-picture.png')
+                unlink($bookPicture);
             $modif =  $this->libraryManager->deleteBook($bookId);
             if($modif == 0)
                 throw new \Exception("Une erreur est survenue lors de la suppression du livre");
+
         }
     }
 

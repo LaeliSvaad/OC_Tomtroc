@@ -4,6 +4,7 @@ namespace App\Controller;
 use App\Http\Session\SessionStorageInterface;
 use App\Manager\LibraryManager;
 use App\Service\LibraryService;
+use App\Utils\Utils;
 use App\View\View;
 
 class LibraryController extends AbstractController

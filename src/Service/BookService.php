@@ -4,6 +4,7 @@ namespace App\Service;
 use App\Http\Request;
 use App\Manager\BookManager;
 use App\Utils\UserInput;
+use App\Utils\Url;
 use App\Enum\BookStatus;
 
 class BookService
@@ -17,6 +18,19 @@ class BookService
         $this->request = new Request();
     }
 
+    public function handleAddBook() : void
+    {
+        if($this->request->isPost())
+        {
+            $bookRequest["title"] = UserInput::controlUserInput($this->request->post("title"));
+            $bookRequest["authorName"] = UserInput::controlUserInput($this->request->post("authorName"));
+            $bookRequest["picture"] = UserInput::controlBookPicture($this->request->post("picture"));
+            $bookRequest["description"] = UserInput::controlUserInput($this->request->post("description"));
+            $bookRequest["status"] = BookStatus::tryFrom(UserInput::controlUserInput($bookRequest["status"]) ?? '');
+
+        }
+    }
+
     /**
      * Edite les informations d'un livre dans la base de données
      *
@@ -24,7 +38,7 @@ class BookService
      * @return void
      * @throws \Exception
      */
-    public function handleBookEdition(Request $request) : void
+    public function handleBookEdition() : void
     {
         /* On stocke dans un tableau les données envoyées par l'utilisateur à l'aide du formulaire, récupérées via l'objet Request */
         if($this->request->isPost())
@@ -95,10 +109,12 @@ class BookService
                     case 'picture':
                         if ($bookRequest["picture"] != null) {
                             $bookRequest["picture"]["name"] = UserInput::controlBookPicture($bookRequest["picture"]["name"]);
-
                             if (move_uploaded_file($bookRequest["picture"]["tmp_name"], $bookRequest["picture"]["name"]) === false) {
                                 throw new \Exception("Une erreur est survenue lors de la mise à jour de l'image");
-                            } else {
+                            }
+                            else {
+                                if($book->getBookPicture() != 'assets/images/books/default-book-picture.png')
+                                    unlink($book->getBookPicture());
                                 $modif = $this->bookManager->modifyBookPicture($bookRequest["picture"]["name"], $bookRequest["id"]);
                                 if ($modif == 0)
                                     throw new \Exception("Une erreur est survenue lors de la mise à jour de l'image");

@@ -104,4 +104,17 @@ class BookManager extends AbstractEntityManager
         ]);
         return $result->rowCount() > 0;
     }
+
+    public function getBookPicture(int $id) : ?string
+    {
+        $sql = "SELECT `book_data`.`picture`
+                FROM `book_data`
+                WHERE `book_data`.`id` = :id";
+
+        $result = $this->db->query($sql, ['id' => $id]);
+
+        $arr = $result->fetchAll();
+
+        return $arr[0]["picture"];
+    }
 }
