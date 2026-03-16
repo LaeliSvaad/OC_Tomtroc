@@ -4,6 +4,7 @@ namespace App\Controller;
 use App\Http\Request;
 use App\Http\Session\SessionStorageInterface;
 use App\Manager\BookManager;
+use App\Model\Book;
 use App\Service\BookService;
 use App\View\View;
 use App\Utils\Utils;
@@ -36,6 +37,11 @@ class BookController extends AbstractController
 
         /*Génère la vue du formulaire d'édition du livre*/
         $this->render("Editer " . $book->getTitle(),"book-form", ['book' => $book] );
+    }
+
+    public function addBookForm():void
+    {
+        $this->render("Ajouter un livre ","add-book");
     }
 
     public function editBook() : void

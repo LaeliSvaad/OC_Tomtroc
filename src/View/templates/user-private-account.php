@@ -71,6 +71,7 @@
                 </tr>
             <?php endforeach;  ?>
             </tbody>
+            <tfoot><tr><td><a href='<?= \App\Utils\Url::to('formulaire-livre') ?>' >+ Ajouter un livre</a></td></tr></tfoot>
         </table>
         <?php }?>
     </div>

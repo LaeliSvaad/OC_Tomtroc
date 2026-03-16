@@ -22,6 +22,8 @@ return[
     ["/mon-compte", UserController::class, "showPrivateUserPage"],
     ["/editer-utilisateur", UserController::class, "modifyUser"],
     ["/utilisateur/{userId:\d+}", UserController::class, "showPublicUserPage"],
+    ["/formulaire-livre", BookController::class, "addBookForm"],
+    ["/ajouter-livre", BookController::class, "addBook"],
     ["/formulaire-livre/{bookId:\d+}", BookController::class, "editBookForm"],
     ["/modifier-livre/{bookId:\d+}", BookController::class, "editBook"],
     ["/supprimer-livre/{bookId:\d+}", LibraryController::class, "deleteBook"],
