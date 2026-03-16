@@ -34,18 +34,18 @@ class UserService
     {
         if($this->request->isPost())
         {
-            $nickname = $this->request->post('nickname', '');
-            $email = $this->request->post('email', '');
+            $nickname = UserInput::controlUserInput($this->request->post('nickname', ''));
+            $email = UserInput::controlUserInput($this->request->post('email', ''));
             $password = $this->request->post('password', '');
 
-            $user = $this->userManager->getUserByLoginInfo($nickname, $email);
+            $this->user = $this->userManager->getUserByLoginInfo($nickname, $email);
 
-            if(!is_null($user))
+            if(!is_null($this->user))
             {
-                if (!password_verify($password, $user->getPassword())) {
+                if (!password_verify($password, $this->user->getPassword())) {
                     throw new \Exception("Une erreur est survenue lors de l'authentification.");
                 }
-                $session->set('userId', $user->getUserId());
+                $session->set('userId', $this->user->getUserId());
                 $session->regenerate();
                 return true;
             }
@@ -59,7 +59,7 @@ class UserService
         {
             $this->user->setNickname(UserInput::controlUserInput($this->request->post("nickname")));
             $this->user->setEmail(UserInput::controlUserInput($this->request->post("email")));
-            $this->user->setPassword(UserInput::controlUserInput($this->request->post("password")));
+            $this->user->setPassword(UserInput::controlPassword($this->request->post("password")));
             if ($this->userManager->checkExistingEmail($this->user->getEmail()))
                 throw new \Exception("Un compte existe déjà avec cette adresse mail.");
             else {
