@@ -70,7 +70,7 @@ class UserService
         return false;
     }
 
-    public function handlePublicUser(int $userId) : User
+    public function handlePublicUser(int $userId) : ?User
     {
         $this->user = $this->userManager->getPublicUserById($userId);
 
@@ -87,7 +87,7 @@ class UserService
         return $this->user;
     }
 
-    public function handlePrivateUser(int $userId) : User
+    public function handlePrivateUser(int $userId) : ?User
     {
         $this->user = $this->userManager->getPrivateUserById($userId);
 

@@ -19,7 +19,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= \App\Utils\Url::to('assets/css/style.css') ?>" />
 </head>
-<body>
+<body data-page="<?= $viewName ?>">
 <?php include __DIR__ . '/partials/header.php'; ?>
 <?php include __DIR__ . '/partials/navbar.php'; ?>
 
@@ -29,5 +29,5 @@
 
 <?php include __DIR__ . '/partials/footer.php'; ?>
 </body>
-<script src="<?= \App\Utils\Url::to('assets/js/script.js') ?>"></script>
+<script type='module' src="<?= \App\Utils\Url::to('assets/js/app.js') ?>"></script>
 </html>

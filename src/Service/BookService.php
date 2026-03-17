@@ -4,7 +4,6 @@ namespace App\Service;
 use App\Http\Request;
 use App\Manager\BookManager;
 use App\Utils\UserInput;
-use App\Utils\Url;
 use App\Enum\BookStatus;
 
 class BookService
@@ -18,46 +17,32 @@ class BookService
         $this->request = new Request();
     }
 
-    public function handleAddBook() : void
-    {
-        if($this->request->isPost())
-        {
-            $bookRequest["title"] = UserInput::controlUserInput($this->request->post("title"));
-            $bookRequest["authorName"] = UserInput::controlUserInput($this->request->post("authorName"));
-            $bookRequest["picture"] = UserInput::controlBookPicture($this->request->post("picture"));
-            $bookRequest["description"] = UserInput::controlUserInput($this->request->post("description"));
-            $bookRequest["status"] = BookStatus::tryFrom(UserInput::controlUserInput($bookRequest["status"]) ?? '');
-
-        }
-    }
-
     /**
      * Edite les informations d'un livre dans la base de données
      *
-     * @param Request $request
      * @return void
      * @throws \Exception
      */
-    public function handleBookEdition() : void
+    public function handleBookEdition() : bool
     {
         /* On stocke dans un tableau les données envoyées par l'utilisateur à l'aide du formulaire, récupérées via l'objet Request */
-        if($this->request->isPost())
+        $bookRequest["id"]= $this->request->post("bookId");
+        $bookRequest["title"] = $this->request->post("title");
+        $bookRequest["authorName"] = $this->request->post("authorName");
+        $bookRequest["picture"] = $this->request->file("picture");
+        $bookRequest["description"] = $this->request->post("description");
+        $bookRequest["status"] = $this->request->post("status");
+
+        /* On s'assure de pouvoir traiter la requête en vérifiant la présence de l'id du livre */
+        if(!isset($bookRequest["id"]) || $bookRequest["id"] == 0)
         {
-            $bookRequest["id"]= $this->request->post("bookId");
-            $bookRequest["title"] = $this->request->post("title");
-            $bookRequest["authorName"] = $this->request->post("authorName");
-            $bookRequest["picture"] = $this->request->file("picture");
-            $bookRequest["description"] = $this->request->post("description");
-            $bookRequest["status"] = $this->request->post("status");
-
-            /* On s'assure de pouvoir traiter la requête en vérifiant la présence de l'id du livre */
-            if(!isset($bookRequest["id"]) || $bookRequest["id"] == 0)
-                throw new \Exception("Une erreur est survenue lors de l'édition du livre");
-            else{
-                $bookRequest["id"] = (int)UserInput::controlUserInput($this->request->post("bookId"));
-                $book = $this->bookManager->getBook($bookRequest["id"]);
-            }
-
+            throw new \Exception("Une erreur est survenue lors de l'édition du livre");
+            return false;
+        }
+        else
+        {
+            $bookRequest["id"] = (int)UserInput::controlUserInput($this->request->post("bookId"));
+            $book = $this->bookManager->getBook($bookRequest["id"]);
             /* On parcourt le tableau: pour chaque entrée, on sécurise les données et on met à jour la base lorsqu'un élément a été modifié */
             foreach ($bookRequest as $key => $value) {
 

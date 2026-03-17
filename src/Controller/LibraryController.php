@@ -24,6 +24,16 @@ class LibraryController extends AbstractController
         $this->render("nos-livres", 'our-books', ['library' => $library->getLibrary()] );
     }
 
+    public function addBookForm() : void
+    {
+        $this->render("Ajouter un livre ","add-book");
+    }
+
+    public function addBook() : void
+    {
+        $this->libraryService->handleAddBook();
+        Utils::redirect('mon-compte');
+    }
     public function showSearchResults() : void
     {
         $library = $this->libraryService->handleBookResearch();
@@ -33,9 +43,7 @@ class LibraryController extends AbstractController
 
     public function deleteBook(int $bookId) : void
     {
-        /* Traitement via le BookService de la suppression du livre */
         $this->libraryService->handleBookSuppression($bookId);
-        /* Retour sur la page mon compte une fois la suppression faite */
         Utils::redirect('mon-compte');
     }
 }

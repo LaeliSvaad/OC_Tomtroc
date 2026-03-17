@@ -26,20 +26,6 @@ class BookController extends AbstractController
         $this->render($book->getTitle(), "book-details", ['book' => $book]);
     }
 
-    public function addBookForm() : void
-    {
-        $this->render("Ajouter un livre ","add-book");
-    }
-
-    public function addBook() : void
-    {
-        /* Traitement via le BookService des données envoyées par l'utilisateur via le formulaire */
-        $this->bookService->handleAddBook();
-
-        /* Retour sur la page mon compte une fois le livre ajouté */
-        Utils::redirect('mon-compte');
-    }
-
     public function editBookForm(int $bookId) : void
     {
         /*Récupère les données du livre qu'on souhaite éditer*/
