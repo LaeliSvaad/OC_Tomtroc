@@ -105,6 +105,28 @@ class LibraryManager extends AbstractEntityManager
         return $library;
     }
 
+    public function checkExistingBooks(string $title): ?Library
+    {
+        $sql = "SELECT
+                    `book`.title, 
+                    `book`.id,
+                    `author`.name,
+                    `author`.id AS authorId
+                FROM `book`
+                INNER JOIN `author` ON `author`.`id` = `book`.`author_id`
+                WHERE `book`.`title` LIKE :title";
+
+        $result = $this->db->query($sql, ['title' => $title]);
+        $library = new Library();
+
+        foreach ($result as $element) {
+            $element["author"] = new Author($element);
+            $book = new Book($element);
+            $library->addBook($book);
+        }
+        return $library;
+    }
+
     public function getLibraryByUserId(int $userId): ?Library
     {
         $sql = "SELECT

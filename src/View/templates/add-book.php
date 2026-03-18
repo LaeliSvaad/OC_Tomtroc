@@ -19,6 +19,7 @@
                 <div class='form-group'>
                     <label class='control-label' for='input-title' >Titre </label>
                     <input class='form-control input-lg blue-input js-input' type='text' id='input-title' name='title' value=''/>
+                    <ul id="results"></ul>
                 </div>
                 <div class='form-group'>
                     <label class='control-label' for='input-author' >Auteur </label>
@@ -37,6 +38,10 @@
                             </option>
                         <?php endforeach; ?>
                     </select>
+                </div>
+                <div class="hidden-form-group">
+                    <input type="hidden" value="" id="input-book-id" name="bookId">
+                    <input type="hidden" value="" id="input-author-id" name="authorId">
                 </div>
                 <div class='form-group'>
                     <input class='btn green-button' type='submit' value='Valider' />

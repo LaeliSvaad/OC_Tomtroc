@@ -46,4 +46,28 @@ class LibraryController extends AbstractController
         $this->libraryService->handleBookSuppression($bookId);
         Utils::redirect('mon-compte');
     }
+
+    public function checkExistingBooks() {
+
+        $input = json_decode(file_get_contents('php://input'), true);
+
+        $query = $input['query'] ?? 'test';
+
+        $library = $this->libraryService->handleBookChecking($query);
+        $results = array();
+        $n = 0;
+        foreach ($library->getLibrary() as $book) {
+            $results[$n]["title"] = $book->getTitle();
+            $results[$n]["bookId"] = $book->getId();
+            $results[$n]["author"] = $book->getAuthor()->getName();
+            $results[$n]["authorId"] = $book->getAuthor()->getAuthorId();
+            ++$n;
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'results' => array_values($results)
+        ]);
+        exit;
+    }
 }

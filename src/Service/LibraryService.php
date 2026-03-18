@@ -64,6 +64,16 @@ class LibraryService
         return null;
     }
 
+    public function handleBookChecking(string $query) : ?Library
+    {
+        if(!is_null($query))
+        {
+            $bookchecking = UserInput::controlUserInput($query);
+            return $this->libraryManager->checkExistingBooks('%'.$bookchecking.'%');
+        }
+        return null;
+    }
+
     /**
      * Ajoute un livre dans la base de données
      *
