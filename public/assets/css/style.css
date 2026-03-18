@@ -261,9 +261,6 @@ th, tr:nth-child(even) td {
     background-color: #C56D6D;
     content: 'non dispo.';
 }
-.book-action-links{
-
-}
 .book-action-links a{
     margin: 10px;
     text-decoration: underline;
@@ -327,6 +324,40 @@ textarea {
 .user-picture-input-div{
     align-items: center;
 }
+.title-container, .author-container {
+    position: relative;
+}
+.dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+
+    background: white;
+    border: 1px solid #ddd;
+    border-top: none;
+
+    max-height: 200px;
+    overflow-y: auto;
+
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    display: none;
+}
+
+.dropdown li {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.dropdown li:hover {
+    background-color: #f5f5f5;
+}
+
 /*User page*/
 .profile-picture{
     object-fit: cover;

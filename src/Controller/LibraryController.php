@@ -51,7 +51,7 @@ class LibraryController extends AbstractController
 
         $input = json_decode(file_get_contents('php://input'), true);
 
-        $query = $input['query'] ?? 'test';
+        $query = $input['query'] ?? '';
 
         $library = $this->libraryService->handleBookChecking($query);
         $results = array();
@@ -61,6 +61,28 @@ class LibraryController extends AbstractController
             $results[$n]["bookId"] = $book->getId();
             $results[$n]["author"] = $book->getAuthor()->getName();
             $results[$n]["authorId"] = $book->getAuthor()->getAuthorId();
+            ++$n;
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'results' => array_values($results)
+        ]);
+        exit;
+    }
+
+    public function checkExistingAuthors() {
+
+        $input = json_decode(file_get_contents('php://input'), true);
+
+        $query = $input['query'] ?? '';
+        $authors = $this->libraryService->handleAuthorsChecking($query);
+        $results = array();
+
+        $n = 0;
+        foreach ($authors as $author) {
+            $results[$n]["author"] = $author->getName();
+            $results[$n]["authorId"] = $author->getAuthorId();
             ++$n;
         }
 

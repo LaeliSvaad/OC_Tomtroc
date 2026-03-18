@@ -1,12 +1,16 @@
 export function init() {
-    const input = document.getElementById('input-title');
-    const resultsList = document.getElementById('results');
+    const titleInput = document.getElementById('input-title');
+    const authorInput = document.getElementById('input-author');
+    const titleResultsList = document.getElementById('title-results');
+    const authorResultsList = document.getElementById('author-results');
 
-    if (!input) return;
+    if (!titleInput || !authorInput) return;
 
     let currentResults = [];
 
-    resultsList.addEventListener('click', (e) => {
+    let timeout = null;
+
+    titleResultsList.addEventListener('click', (e) => {
         const li = e.target.closest('li');
         if (!li) return;
 
@@ -14,19 +18,27 @@ export function init() {
         const item = currentResults[index];
 
         insertInputsValues(item);
+        titleResultsList.style.display = 'none';
     });
+    authorResultsList.addEventListener('click', (e) => {
+        const li = e.target.closest('li');
+        if (!li) return;
 
-    let timeout = null;
+        const index = li.dataset.index;
+        const item = currentResults[index];
 
-    input.addEventListener('input', () => {
+        insertInputsValues(item);
+        authorResultsList.style.display = 'none';
+    });
+    titleInput.addEventListener('input', () => {
         clearTimeout(timeout);
 
         timeout = setTimeout(async () => {
 
-            const query = input.value.trim();
+            const query = titleInput.value.trim();
 
             if (query.length < 2) {
-                resultsList.innerHTML = '';
+                titleResultsList.innerHTML = '';
                 return;
             }
 
@@ -42,32 +54,106 @@ export function init() {
 
             currentResults = data.results;
 
-            displayResults(data, resultsList);
+            displayResults(data, titleResultsList);
 
         }, 300);
+    });
+    titleInput.addEventListener('input', () => {
+        titleResultsList.style.display = 'block';
+    });
+    authorInput.addEventListener('input', () => {
+        clearTimeout(timeout);
+
+        timeout = setTimeout(async () => {
+
+            const query = authorInput.value.trim();
+
+            if (query.length < 2) {
+                authorResultsList.innerHTML = '';
+                return;
+            }
+
+            const res = await fetch('/checkExistingAuthors', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ query })
+            });
+
+            const data = await res.json();
+
+            currentResults = data.results;
+
+            displayResults(data, authorResultsList);
+
+        }, 300);
+    });
+    authorInput.addEventListener('input', () => {
+        authorResultsList.style.display = 'block';
+    });
+    titleInput.addEventListener('input', resetHiddenFields);
+    authorInput.addEventListener('input', resetHiddenFields);
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.title-container')) {
+            titleResultsList.style.display = 'none';
+        }
+        if (!e.target.closest('.author-container')) {
+            authorResultsList.style.display = 'none';
+        }
     });
 }
 function displayResults(data, container) {
     container.innerHTML = '';
 
     if (!data.results || data.results.length === 0) {
-        container.innerHTML = '<li>Aucun résultat</li>';
+        container.style.display = 'none';
         return;
     }
-
-    container.innerHTML = "<span>S'agit-il de l'un de ces livres?</span>";
-
-    data.results.forEach((item, index) => {
-        container.insertAdjacentHTML(
-            'beforeend',
-            `<li data-index="${index}">${item.title}, ${item.author}</li>`
-        );
-    });
+    if(container.id === "title-results")
+    {
+        data.results.forEach((item, index) => {
+            container.insertAdjacentHTML(
+                'beforeend',
+                `<li data-index='${index}'>
+                <strong>${item.title}</strong>
+                <small>${item.author}</small>
+            </li>`
+            );
+        });
+    }
+    if(container.id === "author-results")
+    {
+        data.results.forEach((item, index) => {
+            container.insertAdjacentHTML(
+                'beforeend',
+                `<li data-index="${index}">
+                <strong>${item.author}</strong>
+            </li>`
+            );
+        });
+    }
+    container.style.display = 'block';
 }
 
+function resetHiddenFields() {
+    if (isSelecting) return;
+
+    document.getElementById('input-book-id').value = '';
+    document.getElementById('input-author-id').value = '';
+}
+let isSelecting = false;
 function insertInputsValues(item){
-    document.getElementById('input-title').value = item.title;
+    isSelecting = true;
+
+    if(item.title && item.bookId){
+        document.getElementById('input-title').value = item.title;
+        document.getElementById('input-book-id').value = item.bookId;
+    }
     document.getElementById('input-author').value = item.author;
-    document.getElementById('input-book-id').value = item.bookId;
     document.getElementById('input-author-id').value = item.authorId;
+
+    setTimeout(() => {
+        isSelecting = false;
+    }, 0);
 }

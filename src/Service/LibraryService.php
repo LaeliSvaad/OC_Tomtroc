@@ -73,6 +73,15 @@ class LibraryService
         }
         return null;
     }
+    public function handleAuthorsChecking(string $query) : ?Array
+    {
+        if(!is_null($query))
+        {
+            $authorchecking = UserInput::controlUserInput($query);
+            return $this->libraryManager->checkExistingAuthors('%'.$authorchecking.'%');
+        }
+        return null;
+    }
 
     /**
      * Ajoute un livre dans la base de données

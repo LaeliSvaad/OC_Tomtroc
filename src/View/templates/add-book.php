@@ -17,13 +17,14 @@
         <div class="col-sm-6">
             <form class="form-horizontal admin-form" method='post' action='<?= \App\Utils\Url::to('ajouter-livre') ?>'>
                 <div class='form-group'>
-                    <label class='control-label' for='input-title' >Titre </label>
-                    <input class='form-control input-lg blue-input js-input' type='text' id='input-title' name='title' value=''/>
-                    <ul id="results"></ul>
+                    <label class='control-label' for='input-title'>Titre </label>
+                    <input class='form-control input-lg blue-input' type='text' id='input-title' name='title' value='' autocomplete="off"/>
+                    <div class="title-container"><ul id="title-results" class="dropdown"></ul></div>
                 </div>
                 <div class='form-group'>
                     <label class='control-label' for='input-author' >Auteur </label>
-                    <input class='form-control input-lg blue-input js-input' type='text' id='input-author' name='authorName' value=''/>
+                    <input class='form-control input-lg blue-input' type='text' id='input-author' name='authorName' value='' autocomplete="off"/>
+                    <div class="author-container"><ul id="author-results" class="dropdown"></ul></div>
                 </div>
                 <div class='form-group'>
                     <label class='control-label' for='input-description' >Commentaire </label>

@@ -24,6 +24,7 @@ return[
     ["/utilisateur/{userId:\d+}", UserController::class, "showPublicUserPage"],
     ["/formulaire-livre", LibraryController::class, "addBookForm"],
     ["/checkExistingBooks", LibraryController::class, "checkExistingBooks"],
+    ["/checkExistingAuthors", LibraryController::class, "checkExistingAuthors"],
     ["/ajouter-livre", LibraryController::class, "addBook"],
     ["/supprimer-livre/{bookId:\d+}", LibraryController::class, "deleteBook"],
     ["/formulaire-livre/{bookId:\d+}", BookController::class, "editBookForm"],
