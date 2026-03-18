@@ -92,8 +92,8 @@ export function init() {
     authorInput.addEventListener('input', () => {
         authorResultsList.style.display = 'block';
     });
-    titleInput.addEventListener('input', resetHiddenFields);
-    authorInput.addEventListener('input', resetHiddenFields);
+    titleInput.addEventListener('input', resetHiddenTitleField);
+    authorInput.addEventListener('input', resetHiddenAuthorField);
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.title-container')) {
             titleResultsList.style.display = 'none';
@@ -136,24 +136,35 @@ function displayResults(data, container) {
     container.style.display = 'block';
 }
 
-function resetHiddenFields() {
-    if (isSelecting) return;
-
+function resetHiddenTitleField() {
+    if (isSelectingTitle) return;
     document.getElementById('input-book-id').value = '';
+}
+
+function resetHiddenAuthorField(){
+    if (isSelectingAuthor) return;
     document.getElementById('input-author-id').value = '';
 }
-let isSelecting = false;
+
+let isSelectingTitle = false;
+let isSelectingAuthor = false;
 function insertInputsValues(item){
-    isSelecting = true;
+
 
     if(item.title && item.bookId){
+        isSelectingTitle = true;
         document.getElementById('input-title').value = item.title;
         document.getElementById('input-book-id').value = item.bookId;
+        setTimeout(() => {
+            isSelectingTitle = false;
+        }, 0);
     }
-    document.getElementById('input-author').value = item.author;
-    document.getElementById('input-author-id').value = item.authorId;
-
-    setTimeout(() => {
-        isSelecting = false;
-    }, 0);
+    if(item.author && item.authorId){
+        isSelectingAuthor = true;
+        document.getElementById('input-author').value = item.author;
+        document.getElementById('input-author-id').value = item.authorId;
+        setTimeout(() => {
+            isSelectingAuthor = false;
+        }, 0);
+    }
 }
