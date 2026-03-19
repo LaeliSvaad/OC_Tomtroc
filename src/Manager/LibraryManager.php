@@ -188,7 +188,7 @@ class LibraryManager extends AbstractEntityManager
         return $result->rowCount() > 0;
     }
 
-    public function addBook(Book $book) : bool
+    public function addNewBook(Book $book) : int
     {
         $sql = "INSERT INTO `book` (`title`, `author_id`) VALUES (:title, :authorId)";
 
@@ -197,19 +197,34 @@ class LibraryManager extends AbstractEntityManager
             'authorId' => $book->getAuthor()->getAuthorId()
         ]);
 
-        return $result->rowCount() > 0;
+        return $this->db->lastInsertId();
     }
 
-    public function addBookData(Book $book) : bool
+    public function addBookData(Book $book) : int
     {
-        $sql = "INSERT INTO `book_data` (`book_id`, `picture`, `description`, `status`) VALUES (:bookId, :picture, :description, :status)";
+        try{
+            $this->db->beginTransaction();
 
-        $result = $this->db->query($sql, [
-            'bookId' => $book->getId(),
-            'picture' => $book->getBookPicture(),
-            'description' => $book->getDescription(),
-            'status' => $book->getStatus()
-        ]);
+            $sql1 = "INSERT INTO `book_data` (`book_id`, `picture`, `description`, `status`) VALUES (:bookId, :picture, :description, :status)";
+
+            $this->db->query($sql1, [
+                'bookId' => $book->getId(),
+                'picture' => $book->getBookPicture(),
+                'description' => $book->getDescription(),
+                'status' => $book->getStatus()->value
+            ]);
+            $lastId = $this->db->lastInsertId();
+            $sql2 = "INSERT INTO `library` (`book_data_id`, `user_id`) VALUES (:bookDataId, :userId)";
+            $result = $this->db->query($sql2, [
+                'bookDataId' => $lastId,
+                'userId' => $book->getUser()->getUserId(),
+            ]);
+
+            $this->db->commit();
+        }catch (\Exception $e){
+            $this->db->rollBack();
+            throw $e;
+        }
 
         return $result->rowCount() > 0;
     }

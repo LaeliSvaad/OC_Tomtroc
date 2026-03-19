@@ -3,19 +3,17 @@
     <h2 class="playfair-display-title-font">Ajouter un livre</h2>
     <div class="row admin-row">
         <div class="col-sm-6">
-            <form action="<?= \App\Utils\Url::to('ajouter-livre') ?>" method="post" enctype="multipart/form-data" id="uploadForm">
+            <form action="<?= \App\Utils\Url::to('ajouter-livre') ?>" method="post" enctype="multipart/form-data">
                 <label for="imageUpload">
                     <div class="block-content">
                         <span>Photo</span>
-                        <img class='book-form-img' src='<?= \App\Utils\Url::to('assets/images/books/default-book-picture.png') ?>' alt='default-book-picture.png'>
+                        <img id="imgPreview" class='book-form-img' src='<?= \App\Utils\Url::to('assets/images/books/default-book-picture.png') ?>' alt='default-book-picture.png'>
                         <span class="input-file-span">Modifier la photo</span>
                     </div>
                 </label>
-                <input type="file" name="picture" id="imageUpload" onchange="document.getElementById('uploadForm').submit();">
-            </form>
+                <input type="file" name="picture" id="imageUpload" >
         </div>
         <div class="col-sm-6">
-            <form class="form-horizontal admin-form" method='post' action='<?= \App\Utils\Url::to('ajouter-livre') ?>'>
                 <div class='form-group'>
                     <label class='control-label' for='input-title'>Titre </label>
                     <input class='form-control input-lg blue-input' type='text' id='input-title' name='title' value='' autocomplete="off"/>
@@ -34,7 +32,7 @@
                     <label class='control-label' for='input-disponibilite' >Disponibilité </label>
                     <select class='form-control input-lg blue-input' name='status' id='input-disponibilite'>
                         <?php foreach (App\enum\BookStatus::cases() as $status) : ?>
-                            <option value="<?= $status->value ?>">
+                            <option <?= ($status->value === 'not-available') ? 'selected' : '' ?> value="<?= $status->value ?>">
                                 <?= $status->getLabel() ?>
                             </option>
                         <?php endforeach; ?>
@@ -43,6 +41,7 @@
                 <div class="hidden-form-group">
                     <input type="hidden" value="" id="input-book-id" name="bookId">
                     <input type="hidden" value="" id="input-author-id" name="authorId">
+                    <input type="hidden" value="<?= $this->session->get("userId") ?>" name="userId">
                 </div>
                 <div class='form-group'>
                     <input class='btn green-button' type='submit' value='Valider' />

@@ -5,14 +5,18 @@
  */
 
 namespace App\Manager;
-
-use App\Enum\BookStatus;
 use App\Model\Author;
-use App\Model\Book;
-use App\Model\Library;
 
 
 class AuthorManager extends AbstractEntityManager
 {
+    public function addAuthor(Author $author) : int
+    {
+        $sql = "INSERT INTO `author` (`name`) VALUES (:name)";
 
+        $this->db->query($sql, [
+            'name' => $author->getName()
+        ]);
+        return $this->db->lastInsertId();
+    }
 }

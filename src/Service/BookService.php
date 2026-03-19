@@ -23,7 +23,7 @@ class BookService
      * @return void
      * @throws \Exception
      */
-    public function handleBookEdition() : bool
+    public function handleBookEdition() : void
     {
         /* On stocke dans un tableau les données envoyées par l'utilisateur à l'aide du formulaire, récupérées via l'objet Request */
         $bookRequest["id"]= $this->request->post("bookId");
@@ -37,7 +37,6 @@ class BookService
         if(!isset($bookRequest["id"]) || $bookRequest["id"] == 0)
         {
             throw new \Exception("Une erreur est survenue lors de l'édition du livre");
-            return false;
         }
         else
         {

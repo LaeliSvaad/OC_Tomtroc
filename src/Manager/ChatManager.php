@@ -52,11 +52,11 @@ class ChatManager extends AbstractEntityManager
                 $sender = new User();
                 $sender->setUserId($element["senderId"]);
                 $sender->setNickname($element["senderNickname"]);
-                $sender->setPicture($element["senderPicture"]);
+                $sender->setProfilePicture($element["senderPicture"]);
                 $interlocutor = new User();
                 $interlocutor->setUserId($element["interlocutorId"]);
                 $interlocutor->setNickname($element["interlocutorNickname"]);
-                $interlocutor->setPicture($element["interlocutorPicture"]);
+                $interlocutor->setProfilePicture($element["interlocutorPicture"]);
                 $message = new Message();
                 $message->setConversationId($element["conversationId"]);
                 $message->setText($element["text"]);

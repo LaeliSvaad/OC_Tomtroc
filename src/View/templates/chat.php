@@ -16,7 +16,7 @@
                         <div class="row conversation-overview">
                         <?php endif; ?>
                             <div class="col-xs-2">
-                                <img class="profile-picture medium-profile-picture" src="<?=  \App\Utils\Url::to($conv->getInterlocutor()->getPicture()) ?>" alt="<?= $conv->getInterlocutor()->getNickname() ?>">
+                                <img class="profile-picture medium-profile-picture" src="<?=  \App\Utils\Url::to($conv->getInterlocutor()->getProfilePicture()) ?>" alt="<?= $conv->getInterlocutor()->getNickname() ?>">
                             </div>
                             <?php if($conv->getConversation()[0]->isConnectedUserMessage() === false && $conv->getConversation()[0]->getSeenByRecipient() === false): ?>
                             <div class="col-xs-10 unseen-message">
@@ -37,7 +37,7 @@
             <?php if(!is_null($conversation)): ?>
             <div class="conversation">
                 <div class="conversation-header">
-                    <img class="profile-picture medium-profile-picture" src="<?= \App\Utils\Url::to($conversation->getInterlocutor()->getPicture()) ?>" alt="<?= $conversation->getInterlocutor()->getNickname() ?> profile picture">
+                    <img class="profile-picture medium-profile-picture" src="<?= \App\Utils\Url::to($conversation->getInterlocutor()->getProfilePicture()) ?>" alt="<?= $conversation->getInterlocutor()->getNickname() ?> profile picture">
                     &nbsp;<span><?= $conversation->getInterlocutor()->getNickname() ?></span>
                 </div>
                 <div class="conversation-body">
@@ -49,7 +49,7 @@
                         <?php else: ?>
                         <div class="align-left">
                             <div class="message-header">
-                                <img class="profile-picture mini-profile-picture" src="<?= \App\Utils\Url::to($message->getSender()->getPicture()) ?>" alt="<?= $message->getSender()->getNickname() ?> profile picture">
+                                <img class="profile-picture mini-profile-picture" src="<?= \App\Utils\Url::to($message->getSender()->getProfilePicture()) ?>" alt="<?= $message->getSender()->getNickname() ?> profile picture">
                         <?php endif;?>
                                 <?= \App\Utils\Dates::convertDateToMediumFormat($message->getDatetime()) ?>
                             </div>

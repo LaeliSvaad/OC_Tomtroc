@@ -67,7 +67,22 @@ class DBManager
     {
         return $this->db;
     }
-
+    public function lastInsertId(): int
+    {
+        return (int) $this->db->lastInsertId();
+    }
+    public function beginTransaction(): int
+    {
+        return $this->db->beginTransaction();
+    }
+    public function commit(): bool
+    {
+        return $this->db->commit();
+    }
+    public function rollBack(): bool
+    {
+        return $this->db->rollBack();
+    }
     /**
      * Méthode qui permet d'exécuter une requête SQL.
      * Si des paramètres sont passés, on utilise une requête préparée.

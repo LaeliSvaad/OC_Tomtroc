@@ -8,7 +8,7 @@
                     <form action="<?= \App\Utils\Url::to('editer-utilisateur') ?>" method="post" enctype="multipart/form-data" id="uploadForm">
                         <label for="imageUpload">
                             <div class="block-content user-picture-input-div">
-                                <img class="profile-picture large-profile-picture" src="<?= $user->getPicture() ?>" alt="<?= $user->getNickname() ?> profile picture" />
+                                <img class="profile-picture large-profile-picture" src="<?= $user->getProfilePicture() ?>" alt="<?= $user->getNickname() ?> profile picture" />
                                 <span class="grey-text input-file-span">Modifier</span>
                             </div>
                         </label>

@@ -1,10 +1,13 @@
 <?php
 namespace App\Service;
 
-use App\Enum\BookStatus;
 use App\Manager\LibraryManager;
 use App\Manager\BookManager;
+use App\Manager\AuthorManager;
+use App\Model\Author;
 use App\Model\Library;
+use App\Model\Book;
+use App\Model\User;
 use App\Http\Request;
 use App\Utils\UserInput;
 
@@ -12,12 +15,14 @@ class LibraryService
 {
     private LibraryManager $libraryManager;
     private BookManager $bookManager;
+    private AuthorManager $authorManager;
     private Request $request;
 
     public function __construct()
     {
         $this->libraryManager = new LibraryManager();
         $this->bookManager = new BookManager();
+        $this->authorManager = new AuthorManager();
         $this->request = new Request();
     }
 
@@ -94,11 +99,30 @@ class LibraryService
         if($this->request->isPost())
         {
             $bookRequest["title"] = UserInput::controlUserInput($this->request->post("title"));
-            $bookRequest["authorName"] = UserInput::controlUserInput($this->request->post("authorName"));
-            $bookRequest["picture"] = UserInput::controlBookPicture($this->request->post("picture"));
+            $bookRequest["id"] = (int)UserInput::controlUserInput($this->request->post("bookId"));
+            $bookRequest["name"] = UserInput::controlUserInput($this->request->post("authorName"));
+            $bookRequest["authorId"] = (int)UserInput::controlUserInput($this->request->post("authorId"));
+            $bookRequest["bookPicture"] = UserInput::controlBookPicture($this->request->file("picture")['name']);
             $bookRequest["description"] = UserInput::controlUserInput($this->request->post("description"));
-            $bookRequest["status"] = BookStatus::tryFrom(UserInput::controlUserInput($bookRequest["status"]) ?? '');
+            $bookRequest["status"] = UserInput::controlUserInput($this->request->post("status"));
+            $bookRequest["userId"] = UserInput::controlUserInput($this->request->post("userId"));
 
+            $bookRequest["author"] = new Author($bookRequest);
+            $bookRequest["user"] = new User($bookRequest);
+            $book = new Book($bookRequest);
+
+            if(!$book->getId() && !$book->getAuthor()->getAuthorId())
+            {
+                $book->getAuthor()->setAuthorId($this->authorManager->addAuthor($book->getAuthor()));
+                $book->setId($this->libraryManager->addNewBook($book));
+            }
+            if ($bookRequest["bookPicture"] != null) {
+                if (move_uploaded_file($this->request->file("picture")["tmp_name"], $book->getBookPicture()) === false) {
+                    $book->setBookPicture("assets/images/books/default-book-picture.png");
+                    throw new \Exception("Une erreur est survenue lors de la mise à jour de l'image");
+                }
+            }
+            $this->libraryManager->addBookData($book);
         }
     }
 }

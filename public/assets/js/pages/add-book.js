@@ -4,6 +4,23 @@ export function init() {
     const titleResultsList = document.getElementById('title-results');
     const authorResultsList = document.getElementById('author-results');
 
+    const inputImg = document.getElementById('imageUpload');
+    const imgPreview = document.getElementById('imgPreview');
+
+    inputImg.addEventListener('change', function () {
+        const file = this.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.addEventListener('load', function () {
+                imgPreview.src = this.result;
+            });
+
+            reader.readAsDataURL(file);
+        }
+    });
+
     if (!titleInput || !authorInput) return;
 
     let currentResults = [];
@@ -143,6 +160,7 @@ function resetHiddenTitleField() {
 
 function resetHiddenAuthorField(){
     if (isSelectingAuthor) return;
+    document.getElementById('input-book-id').value = '';
     document.getElementById('input-author-id').value = '';
 }
 

@@ -6,7 +6,7 @@ $isOwner = $connectedUserId === $user->getUserId();
 $bookPicture = $book->getBookPicture();
 $bookTitle = $book->getTitle();
 $bookDescription = $book->getDescription();
-$userPicture = $user->getPicture();
+$userPicture = $user->getProfilePicture();
 $userNickname = $user->getNickname();
 $userId = $user->getUserId();
 ?>
