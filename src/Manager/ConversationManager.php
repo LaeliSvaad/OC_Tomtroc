@@ -14,7 +14,7 @@ class ConversationManager extends AbstractEntityManager
     {
         $sql = "SELECT
                     `user`.`nickname`, 
-                    `user`.`picture`,
+                    `user`.`picture` AS `profilePicture`,
                     `user`.`id` AS userId,
                     `message`.`text`, 
                     `message`.`sender_id`,
@@ -54,7 +54,7 @@ class ConversationManager extends AbstractEntityManager
     {
         $sql = "SELECT
                     `user`.`nickname`, 
-                    `user`.`picture`,
+                    `user`.`picture` AS `profilePicture`,
                     `user`.`id` AS userId,
                     `message`.`text`, 
                     `message`.`sender_id`,
@@ -95,7 +95,7 @@ class ConversationManager extends AbstractEntityManager
     {
         $sql = "SELECT 
                     `user`.`nickname`, 
-                    `user`.`picture`,
+                    `user`.`picture` AS `profilePicture`,
                     `user`.`id` AS userId
                 FROM `conversation`
                 JOIN user

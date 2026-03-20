@@ -17,7 +17,7 @@ class BookManager extends AbstractEntityManager
         $sql = "SELECT book.`title`,
                 book_data.`description`, book_data.`status`, book_data.`picture` AS bookPicture, book_data.`id`,
                 author.`name`, author.id AS authorId, 
-                user.`nickname`, user.`picture`, user.`email`, user.`id` AS userId
+                user.`nickname`, user.`picture` AS profilePicture, user.`email`, user.`id` AS userId
                 FROM book 
                 INNER JOIN book_data ON book.`id` = book_data.book_id 
                 INNER JOIN author ON book.`author_id` = author.id 

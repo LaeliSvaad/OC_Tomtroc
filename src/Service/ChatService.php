@@ -4,7 +4,6 @@ namespace App\Service;
 use App\Manager\ChatManager;
 use App\Manager\ConversationManager;
 use App\Manager\UserManager;
-use App\Http\Request;
 use App\Model\Conversation;
 
 class ChatService
@@ -20,12 +19,11 @@ class ChatService
         $this->userManager = new UserManager();
     }
 
-    public function prepareChatData(int $connectedUserId, ?string $type, ?int $id, Request $request): array
+    public function prepareChatData(int $connectedUserId, ?string $type, ?int $id): array
     {
         $connectedUser = $this->userManager->getPublicUserById($connectedUserId);
         $chat = $this->chatManager->getChat($connectedUserId);
         $chat->setConnectedUser($connectedUser);
-
         if ($type === null) {
             return $this->getDefaultConversationData($chat, $connectedUserId);
         }

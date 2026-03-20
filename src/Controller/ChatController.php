@@ -40,7 +40,7 @@ class ChatController extends AbstractController
         }
 
         /* Si aucun message n'est envoyé, on récupère le chat et on envoie la vue: */
-        $chatData = $this->chatService->prepareChatData($connectedUserId, $type, $id, $this->request);
-        $this->render("chat", 'chat', $chatData);
+        $chatData = $this->chatService->prepareChatData($connectedUserId, $type, $id);
+        $this->render("chat", 'chat', ["conversation" => $chatData["conversation"], "chat" => $chatData["chat"]]);
     }
 }
