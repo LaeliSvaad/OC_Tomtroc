@@ -51,11 +51,11 @@
             </div>
         </div>
     </div>
-    <?php if($user->getLibrary()->countBooks() != 0){ ?>
     <div class="row">
         <table class="books-table">
             <tbody>
             <tr class="uppercase-text"><th>Photo</th><th>Titre</th><th>Auteur</th><th>Description</th><th>Disponibilité</th><th>Action</th></tr>
+            <?php if($user->getLibrary()->countBooks() != 0){ ?>
             <?php foreach ($library as $book):
                 $author = $book->getAuthor();
                 $status = $book->getStatus(); ?>
@@ -70,10 +70,10 @@
                             <a href='<?= \App\Utils\Url::to('supprimer-livre/' . $book->getId() ) ?>' >Supprimer</a></div></td>
                 </tr>
             <?php endforeach;  ?>
+            <?php }?>
             </tbody>
             <tfoot><tr><td><a href='<?= \App\Utils\Url::to('formulaire-livre') ?>' >+ Ajouter un livre</a></td></tr></tfoot>
         </table>
-        <?php }?>
     </div>
 </div>
 

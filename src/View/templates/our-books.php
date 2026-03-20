@@ -20,12 +20,14 @@
             </div>
         </div>
         <div class='row'>
-            <?php foreach ($library as $book):
-                $bookId   = $book->getId();
-                $user     = $book->getUser();
-                $userId   = $user->getUserId();
-                $author   = $book->getAuthor();
-                $isOwner  = !is_null($this->session->get('userId')) && $this->session->get('userId') == $userId; ?>
+            <?php
+                if($library->countBooks() != 0):
+                foreach ($library->getLibrary() as $book):
+                    $bookId   = $book->getId();
+                    $user     = $book->getUser();
+                    $userId   = $user->getUserId();
+                    $author   = $book->getAuthor();
+                    $isOwner  = !is_null($this->session->get('userId')) && $this->session->get('userId') == $userId; ?>
             <div class="col-xs-6 col-sm-3 book-card">
                 <a href="<?= \App\Utils\Url::to('/nos-livres/' . $book->getId()) ?>">
                     <div class="book-img">
@@ -38,7 +40,12 @@
                     </div>
                 </a>
             </div>
-            <?php endforeach; ?>
+            <?php
+                endforeach;
+                else:
+                    echo"Aucun livre à afficher.";
+                endif;
+            ?>
         </div>
     </div>
 </section>

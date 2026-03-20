@@ -21,7 +21,7 @@ class LibraryController extends AbstractController
     public function showLibrary() : void
     {
         $library = $this->libraryManager->getAvailableBooks();
-        $this->render("nos-livres", 'our-books', ['library' => $library->getLibrary()] );
+        $this->render("nos-livres", 'our-books', ['library' => $library] );
     }
 
     public function addBookForm() : void
@@ -37,7 +37,7 @@ class LibraryController extends AbstractController
     public function showSearchResults() : void
     {
         $library = $this->libraryService->handleBookResearch();
-        $this->render("nos-livres", 'our-books', ['library' => $library->getLibrary()] );
+        $this->render("nos-livres", 'our-books', ['library' => $library] );
 
     }
 

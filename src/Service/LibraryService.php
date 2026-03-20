@@ -119,7 +119,6 @@ class LibraryService
             if ($bookRequest["bookPicture"] != null) {
                 if (move_uploaded_file($this->request->file("picture")["tmp_name"], $book->getBookPicture()) === false) {
                     $book->setBookPicture("assets/images/books/default-book-picture.png");
-                    throw new \Exception("Une erreur est survenue lors de la mise à jour de l'image");
                 }
             }
             $this->libraryManager->addBookData($book);

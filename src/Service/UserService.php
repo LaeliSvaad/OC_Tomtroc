@@ -60,6 +60,7 @@ class UserService
             $this->user->setNickname(UserInput::controlUserInput($this->request->post("nickname")));
             $this->user->setEmail(UserInput::controlUserInput($this->request->post("email")));
             $this->user->setPassword(UserInput::controlPassword($this->request->post("password")));
+            $this->user->setProfilePicture("assets/images/profile/default-profile-picture.png");
             if ($this->userManager->checkExistingEmail($this->user->getEmail()))
                 throw new \Exception("Un compte existe déjà avec cette adresse mail.");
             else {
@@ -156,11 +157,11 @@ class UserService
                         {
                             $userRequest["picture"]["name"] = UserInput::controlProfilePicture($userRequest["picture"]["name"]);
 
-                            if(move_uploaded_file($userRequest["picture"]["tmp_name"], $userRequest["picture"]["name"]) === false){
+                            if(move_uploaded_file($userRequest["picture"]["tmp_name"],  $userRequest["picture"]["name"]) === false){
                                 throw new \Exception("Une erreur est survenue lors de la mise à jour de vos informations. 4");
                             }
                             else{
-                                $modif = $this->userManager->modifyUserPicture($userRequest["picture"]["name"], $userRequest["userId"]);
+                                $modif = $this->userManager->modifyUserPicture( $userRequest["picture"]["name"], $userRequest["userId"]);
                                 if($modif == 0)
                                     throw new \Exception("Une erreur est survenue lors de la mise à jour de vos informations. 5");
                             }
