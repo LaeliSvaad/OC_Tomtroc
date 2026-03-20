@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : db
--- Généré le : jeu. 19 mars 2026 à 12:06
+-- Généré le : ven. 20 mars 2026 à 17:32
 -- Version du serveur : 8.0.41
 -- Version de PHP : 8.2.27
 
@@ -37,11 +37,11 @@ CREATE TABLE `author` (
 --
 
 INSERT INTO `author` (`name`, `id`) VALUES
-('Friedrich Nietzsche', 1),
-('Donatien Alphonse François', 2),
-('Mylène Farmer', 3),
-('Donatello', 4),
-('Jacques le Grand', 12);
+('Moi Même', 13),
+('Jesais Pas', 14),
+('Blagui Blaguou', 16),
+('Pierre Jacques', 17),
+('Auteur Auteur', 18);
 
 -- --------------------------------------------------------
 
@@ -60,13 +60,11 @@ CREATE TABLE `book` (
 --
 
 INSERT INTO `book` (`title`, `author_id`, `id`) VALUES
-('Le gai savoir', 1, 1),
-('Ainsi parlait Zarathoustra', 1, 2),
-('La philosophie dans le boudoir', 2, 3),
-('Généalogie de la morale', 1, 4),
-('Justineee ou les Malheurs de la vertu', 2, 5),
-('Génération désenchantée', 3, 6),
-('Généalogie de la morale', 12, 13);
+('Mon 1er livre', 13, 14),
+('Le petit chaperon rouge', 14, 15),
+('Une histoire drôle', 16, 17),
+('Le petit chaperon rouge', 17, 18),
+('Livre', 18, 19);
 
 -- --------------------------------------------------------
 
@@ -87,10 +85,11 @@ CREATE TABLE `book_data` (
 --
 
 INSERT INTO `book_data` (`book_id`, `picture`, `description`, `status`, `id`) VALUES
-(2, 'assets/images/books/default-book-picture.png', 'Ainsi parlait Zarathoustra ou Ainsi parla Zarathoustra, sous-titré « Un livre pour tous et pour personne » (en allemand : Also sprach Zarathustra. Ein Buch für Alle und Keinen), est un poème philosophique de Friedrich Nietzsche, publié en plusieurs volumes entre 1883 et 1885. ', 'available', 2),
-(2, 'assets/images/books/default-book-picture.png', 'Un super Livre!!!!', 'available', 3),
-(4, 'assets/images/books/default-book-picture.png', 'Encore un livre cool', 'available', 8),
-(13, 'assets/images/books/livre-ouvert.jpg', 'test test test', 'reserved', 13);
+(14, 'assets/images/books//69bd84823375f4.01483005.jpg', 'Une oeuvre surréaliste édifiante', 'available', 15),
+(15, 'assets/images/books/default-book-picture.png', 'Un conte pour enfants', 'available', 16),
+(17, 'assets/images/books/default-book-picture.png', 'Histoire drôle!', 'available', 17),
+(18, 'assets/images/books/default-book-picture.png', 'Un commentaire', 'reserved', 18),
+(19, 'assets/images/books/default-book-picture.png', 'Commentaire commentaire', 'reserved', 19);
 
 -- --------------------------------------------------------
 
@@ -109,7 +108,9 @@ CREATE TABLE `conversation` (
 --
 
 INSERT INTO `conversation` (`user_1_id`, `user_2_id`, `id`) VALUES
-(3, 4, 38);
+(28, 27, 39),
+(29, 27, 40),
+(27, 30, 41);
 
 -- --------------------------------------------------------
 
@@ -128,10 +129,11 @@ CREATE TABLE `library` (
 --
 
 INSERT INTO `library` (`book_data_id`, `user_id`, `id`) VALUES
-(2, 3, 2),
-(3, 4, 3),
-(8, 3, 8),
-(13, 3, 11);
+(15, 27, 13),
+(16, 27, 14),
+(17, 28, 15),
+(18, 29, 16),
+(19, 30, 17);
 
 -- --------------------------------------------------------
 
@@ -153,18 +155,13 @@ CREATE TABLE `message` (
 --
 
 INSERT INTO `message` (`text`, `date`, `seen_by_recipient`, `sender_id`, `conversation_id`, `id`) VALUES
-('fgsdfsgf', '2025-10-21 12:48:51', 1, 3, 38, 58),
-('test', '2025-10-21 12:49:07', 1, 4, 38, 59),
-('test', '2025-10-21 12:49:15', 1, 4, 38, 60),
-('tedfgdfg', '2025-10-21 12:49:49', 1, 3, 38, 61),
-('tyry', '2025-10-21 12:50:02', 1, 4, 38, 62),
-('hdfghdfghdfgh', '2025-10-21 12:52:51', 1, 4, 38, 63),
-('fghdfgh', '2025-10-21 12:52:58', 1, 4, 38, 64),
-('gfhdfgh', '2025-10-21 12:53:08', 0, 3, 38, 65),
-('frereeererazdfsdf', '2026-03-12 13:04:59', 0, 3, 38, 66),
-('traertae', '2026-03-12 13:05:09', 0, 3, 38, 67),
-('fdsfsd', '2026-03-12 17:57:01', 0, 3, 38, 68),
-('test', '2026-03-12 17:57:36', 0, 3, 38, 69);
+('Bonjour!', '2026-03-20 13:34:56', 1, 28, 39, 73),
+('Votre livre \"Mon 1er livre\" est-il toujours disponible?', '2026-03-20 13:35:33', 1, 28, 39, 74),
+('Bonjour! Je voudrais lire le petit chaperon rouge!', '2026-03-20 13:38:18', 1, 29, 40, 75),
+('ok', '2026-03-20 13:39:14', 1, 27, 39, 76),
+('bah toi aussi tu l\'as', '2026-03-20 13:39:24', 1, 27, 40, 77),
+('Il est bien ce livre?', '2026-03-20 13:58:24', 1, 27, 41, 78),
+('oui!', '2026-03-20 13:59:05', 0, 30, 41, 79);
 
 -- --------------------------------------------------------
 
@@ -176,7 +173,7 @@ CREATE TABLE `user` (
   `nickname` varchar(40) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `picture` varchar(180) NOT NULL DEFAULT 'pictures/profile/default-profile-picture.png',
+  `picture` varchar(180) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `registration_date` datetime NOT NULL,
   `id` smallint UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -186,9 +183,10 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`nickname`, `email`, `password`, `picture`, `registration_date`, `id`) VALUES
-('Lisa', 'lisa.valade@hotmail.fr', '$2y$10$QarDX3Y5b5uaFhuDNRGiC.gl13FGYllSlVYAvTtvDhcCA3VR45FAW', 'assets/images/profile/default-profile-picture.png', '2025-07-09 07:15:06', 3),
-('Lisa2', 'lisa.valade@orange.fr', '$2y$10$Qo/QVwFyrnBtuY.LQYScsuv5IGHZTEZ7UHpzbLl.m0GhT3Ez.orFe', 'assets/images/profile/default-profile-picture.png', '2025-06-04 00:00:00', 4),
-('Chaton', 'chat@chat.fr', '$2y$10$Q02ewWNtl29SFZP8YOyP/OVEM6kB75mjw8i5zk4VmKPiU7vSooIoq', 'assets/images/profile/default-profile-picture.png', '2026-03-16 13:10:40', 26);
+('Lisa', 'lisa.valade@hotmail.fr', '$2y$10$zn3B5VCc3qTC6a/YCzko9e6G0pqw3S1YcPtcvqhR0j8rBK090I8yq', 'assets/images/profile//69bd8415142e02.28160173.jpg', '2026-03-20 13:26:59', 27),
+('Chaton', 'chat@chat.fr', '$2y$10$cqRmIRmLBMDuIlKfQqTu.e3RO2QjhceITnVvDsbm05ke./lnt7Jp.', 'assets/images/profile/default-profile-picture.png', '2026-03-20 13:32:33', 28),
+('Vrai Grand Tigre', 'tigrou@tigrou.fr', '$2y$10$bSxdR4/..VTZsGmacJmPB.MsimBh5NGdXSkd4OW3xPQfSrMP6Ymsa', 'assets/images/profile/default-profile-picture.png', '2026-03-20 13:36:27', 29),
+('Jeanine Leblanc', 'j@j.fr', '$2y$10$Nj21F0a7/5eMaU9lSRErIeGr4XmCOGfo1I15P/cctmRwScEOszp8y', 'assets/images/profile/default-profile-picture.png', '2026-03-20 13:57:06', 30);
 
 --
 -- Index pour les tables déchargées
@@ -244,43 +242,43 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT pour la table `author`
 --
 ALTER TABLE `author`
-  MODIFY `id` smallint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` smallint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT pour la table `book`
 --
 ALTER TABLE `book`
-  MODIFY `id` smallint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` smallint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT pour la table `book_data`
 --
 ALTER TABLE `book_data`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT pour la table `conversation`
 --
 ALTER TABLE `conversation`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT pour la table `library`
 --
 ALTER TABLE `library`
-  MODIFY `id` smallint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` smallint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT pour la table `message`
 --
 ALTER TABLE `message`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
 
 --
 -- AUTO_INCREMENT pour la table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` smallint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` smallint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

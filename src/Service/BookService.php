@@ -1,6 +1,7 @@
 <?php
 namespace App\Service;
 
+use App\Config\Config;
 use App\Http\Request;
 use App\Manager\BookManager;
 use App\Utils\UserInput;
@@ -10,11 +11,13 @@ class BookService
 {
     private BookManager $bookManager;
     private Request $request;
+    private ImageService $imageService;
 
     public function __construct()
     {
         $this->bookManager = new BookManager();
         $this->request = new Request();
+        $this->imageService = new ImageService();
     }
 
     /**
@@ -92,17 +95,12 @@ class BookService
 
                     case 'picture':
                         if ($bookRequest["picture"] != null) {
-                            $bookRequest["picture"]["name"] = UserInput::controlBookPicture($bookRequest["picture"]["name"]);
-                            if (move_uploaded_file($bookRequest["picture"]["tmp_name"], $bookRequest["picture"]["name"]) === false) {
+                            $book_picture = $this->imageService->upload($bookRequest["picture"], Config::get('app.books_pictures_folder'));
+                            if($book->getBookPicture() != 'assets/images/books/default-book-picture.png')
+                                unlink($book->getBookPicture());
+                            $modif = $this->bookManager->modifyBookPicture($book_picture, $bookRequest["id"]);
+                            if ($modif == 0)
                                 throw new \Exception("Une erreur est survenue lors de la mise à jour de l'image");
-                            }
-                            else {
-                                if($book->getBookPicture() != 'assets/images/books/default-book-picture.png')
-                                    unlink($book->getBookPicture());
-                                $modif = $this->bookManager->modifyBookPicture($bookRequest["picture"]["name"], $bookRequest["id"]);
-                                if ($modif == 0)
-                                    throw new \Exception("Une erreur est survenue lors de la mise à jour de l'image");
-                            }
                         }
                         break;
                 }

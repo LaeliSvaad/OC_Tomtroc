@@ -8,8 +8,10 @@ use App\Manager\ConversationManager;
 use App\Manager\LibraryManager;
 use App\Manager\UserManager;
 use App\Model\Chat;
-use App\Utils\UserInput;
 use App\Model\User;
+use App\Utils\UserInput;
+use App\Config\Config;
+
 
 class UserService
 {
@@ -17,6 +19,7 @@ class UserService
     private ChatManager $chatManager;
     private ConversationManager $conversationManager;
     private LibraryManager $libraryManager;
+    private ImageService $imageService;
     private Request $request;
     private User $user;
 
@@ -26,6 +29,7 @@ class UserService
         $this->libraryManager = new LibraryManager();
         $this->chatManager = new ChatManager();
         $this->conversationManager = new ConversationManager();
+        $this->imageService = new ImageService();
         $this->user = new User();
         $this->request = new Request();
     }
@@ -155,16 +159,10 @@ class UserService
                     case 'picture':
                         if($userRequest["picture"] != null)
                         {
-                            $userRequest["picture"]["name"] = UserInput::controlProfilePicture($userRequest["picture"]["name"]);
-
-                            if(move_uploaded_file($userRequest["picture"]["tmp_name"],  $userRequest["picture"]["name"]) === false){
-                                throw new \Exception("Une erreur est survenue lors de la mise à jour de vos informations. 4");
-                            }
-                            else{
-                                $modif = $this->userManager->modifyUserPicture( $userRequest["picture"]["name"], $userRequest["userId"]);
-                                if($modif == 0)
-                                    throw new \Exception("Une erreur est survenue lors de la mise à jour de vos informations. 5");
-                            }
+                            $profile_picture = $this->imageService->upload($userRequest["picture"], Config::get('app.profile_pictures_folder'));
+                            $modif = $this->userManager->modifyUserPicture($profile_picture, $userRequest["userId"]);
+                            if($modif == 0)
+                                throw new \Exception("Une erreur est survenue lors de la mise à jour de vos informations. 5");
                         }
                         break;
                 }

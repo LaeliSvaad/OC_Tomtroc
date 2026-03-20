@@ -1,6 +1,7 @@
 <?php
 namespace App\Service;
 
+use App\Config\Config;
 use App\Manager\LibraryManager;
 use App\Manager\BookManager;
 use App\Manager\AuthorManager;
@@ -16,6 +17,7 @@ class LibraryService
     private LibraryManager $libraryManager;
     private BookManager $bookManager;
     private AuthorManager $authorManager;
+    private ImageService $imageService;
     private Request $request;
 
     public function __construct()
@@ -23,6 +25,7 @@ class LibraryService
         $this->libraryManager = new LibraryManager();
         $this->bookManager = new BookManager();
         $this->authorManager = new AuthorManager();
+        $this->imageService = new ImageService();
         $this->request = new Request();
     }
 
@@ -102,7 +105,6 @@ class LibraryService
             $bookRequest["id"] = (int)UserInput::controlUserInput($this->request->post("bookId"));
             $bookRequest["name"] = UserInput::controlUserInput($this->request->post("authorName"));
             $bookRequest["authorId"] = (int)UserInput::controlUserInput($this->request->post("authorId"));
-            $bookRequest["bookPicture"] = UserInput::controlBookPicture($this->request->file("picture")['name']);
             $bookRequest["description"] = UserInput::controlUserInput($this->request->post("description"));
             $bookRequest["status"] = UserInput::controlUserInput($this->request->post("status"));
             $bookRequest["userId"] = UserInput::controlUserInput($this->request->post("userId"));
@@ -110,6 +112,7 @@ class LibraryService
             $bookRequest["author"] = new Author($bookRequest);
             $bookRequest["user"] = new User($bookRequest);
             $book = new Book($bookRequest);
+            $book->setBookPicture("assets/images/books/default-book-picture.png");
 
             if(!$book->getId() && !$book->getAuthor()->getAuthorId())
             {
@@ -117,9 +120,7 @@ class LibraryService
                 $book->setId($this->libraryManager->addNewBook($book));
             }
             if ($bookRequest["bookPicture"] != null) {
-                if (move_uploaded_file($this->request->file("picture")["tmp_name"], $book->getBookPicture()) === false) {
-                    $book->setBookPicture("assets/images/books/default-book-picture.png");
-                }
+                $book->setBookPicture($this->imageService->upload($bookRequest["bookPicture"], Config::get('app.books_pictures_folder')));
             }
             $this->libraryManager->addBookData($book);
         }

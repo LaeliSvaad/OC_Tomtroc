@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-xs-12 col-sm-3">
                 <div class="profile-picture">
-                    <img class="profile-picture large-profile-picture" src="<?= \App\Utils\Url::to($user->getProfilePicture()) ?>" alt="<?= $user->getNickname() ?> profile picture" />
+                    <img class="profile-picture large-profile-picture" src="<?= \App\Utils\Url::to($user->getProfilePicture())   ?>" alt="<?= $user->getNickname() ?> profile picture" />
                 </div>
                 <div>
                     <img src="<?= \App\Utils\Url::to('assets/images/separator.png') ?>" alt="separator">
